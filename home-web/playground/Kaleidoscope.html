@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="uploads/ArunDeepLogo.png">
+    <title>ArunDeep - Kaleidoscope</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <style>
+        /* Basic CSS for centering the canvas and removing default margins */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #222; /* Dark background for contrast */
+            overflow: hidden; /* Prevent scrollbars */
+            font-family: sans-serif;
+        }
+        canvas {
+            display: block;
+            border: 1px solid #555; /* Optional border for the canvas */
+        }
+        /* Simple instruction text */
+        #instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #eee;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            opacity: 0.5;
+        }
+
+        #logo_img {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="instructions">
+        <table>
+        <tr>
+            <td><div class="logo-img"><a href="https://agidevs.github.io/"><img src="uploads/ArunDeepLogo.png" height="30"></a></div>
+    </td>
+        <td><div class="logo-img"><a href="https://play.google.com/store/apps/dev?id=8575568315140922409" target="_blank"><img src="uploads/google_icon.png", height="20"></a></div></td>
+        <td>Move your mouse over the canvas to draw!</td>
+        </tr>
+    </table>        
+    </div>
+    <script>
+        // --- p5.js Sketch ---
+
+        // Number of symmetrical slices
+        const symmetry = 6;
+        // Angle between slices
+        let angle;
+
+        // Variable to store the hue for color cycling
+        let hueValue = 0;
+
+        // Setup function runs once when the program starts
+        function setup() {
+            // Create a canvas that fills the window
+            createCanvas(windowWidth, windowHeight);
+            // Calculate the angle based on symmetry
+            angle = 360 / symmetry;
+            // Set color mode to HSB (Hue, Saturation, Brightness) for easier color cycling
+            colorMode(HSB, 360, 100, 100, 100); // Added alpha range
+            // Set the background color
+            background(0); // Black background
+            // Set the stroke weight (thickness of the lines)
+            strokeWeight(3);
+            // Disable filling shapes (we only want outlines)
+            noFill();
+        }
+
+        // Draw function runs continuously
+        function draw() {
+            // Translate the origin (0,0) to the center of the canvas
+            translate(width / 2, height / 2);
+
+            // Only draw if the mouse is inside the canvas
+            if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+                // Calculate mouse position relative to the center
+                let mx = mouseX - width / 2;
+                let my = mouseY - height / 2;
+                // Calculate previous mouse position relative to the center
+                let pmx = pmouseX - width / 2;
+                let pmy = pmouseY - height / 2;
+
+                // Calculate mouse speed (distance moved since last frame)
+                let speed = dist(mouseX, mouseY, pmouseX, pmouseY);
+
+                // Set stroke color based on hueValue and speed (brighter for faster movement)
+                // Cycle the hue value
+                hueValue = (hueValue + 0.5) % 360;
+                // Map speed to saturation/brightness or stroke weight for more dynamics
+                let saturation = map(speed, 0, 20, 70, 100, true); // More saturated when moving faster
+                let brightness = map(speed, 0, 20, 80, 100, true); // Brighter when moving faster
+                let alpha = map(speed, 0, 15, 50, 90, true); // More opaque when moving faster
+
+                stroke(hueValue, saturation, brightness, alpha); // Apply the calculated color and alpha
+
+                // Loop through each symmetry slice
+                for (let i = 0; i < symmetry; i++) {
+                    // Rotate the coordinate system for the current slice
+                    rotate(radians(angle));
+
+                    // Draw a line from the previous mouse position to the current mouse position
+                    // Use the relative coordinates calculated earlier
+                    line(pmx, pmy, mx, my);
+
+                    // Apply reflection (scale vertically by -1)
+                    push(); // Save the current transformation state
+                    scale(1, -1); // Flip the y-axis
+                    line(pmx, pmy, mx, my); // Draw the reflected line
+                    pop(); // Restore the previous transformation state
+                }
+            }
+        }
+
+        // Adjust canvas size if the window is resized
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+            background(0); // Redraw background on resize
+        }
+
+        // --- End of p5.js Sketch ---
+    </script>
+</body>
+</html>
