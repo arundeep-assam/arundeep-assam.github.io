@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>ArunDeep - Pick a Card</title>
+    <link rel="icon" type="image/x-icon" href="uploads/ArunDeepLogo.png">
+    <meta name="description" content="&amp;lt;p&amp;gt;Pick a card and I will guess.
+&amp;lt;br /&amp;gt;
+&amp;lt;/p&amp;gt;&amp;lt;h2...">
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
+    <meta name="turbo-visit-control" content="reload">
+  
+    <link rel="stylesheet" href="uploads/preview.css" media="all" />
+    <link rel="stylesheet" href="uploads/card_css.css" media="all">
+
+    <script src="uploads/full_screen_preview.js"></script>
+
+   
+ </head>
+
+  <body class="full-screen-preview">
+    <div class="preview__header">
+ 
+    <a href="https://arundeep-assam.github.io/"><img src="uploads/ArunDeepLogo.png" height="50px"></a>
+
+    
+
+
+  <div id="js-preview__actions" class="preview__actions"> 
+  <div class="preview__action--buy">
+
+    <a href="https://play.google.com/store/apps/dev?id=8575568315140922409"><img src="uploads/google_icon.png" height="20px"></a>
+  </div>
+</div>
+</div>
+
+<br><br>
+
+
+<video autoplay="" muted="" loop="" playsinline="" id="smoke-bg">
+  <source src="http://mattcannon.games/codepen/pick-a-card/smoke.mp4" type="video/mp4">
+</video>
+<div id="stage">
+  <h2 id="main-title">PICK A CARD &amp; REMEMBER IT</h2>
+  <div id="step-1">
+    <div id="card-pick" class="card-container"><img src="https://deckofcardsapi.com/static/img/7C.png" alt="7 of CLUBS" style="transform: rotate(-50deg); left: calc(50% - 320px); bottom: 0px; z-index: 0;"><img src="https://deckofcardsapi.com/static/img/3H.png" alt="3 of HEARTS" style="transform: rotate(-45deg); left: calc(50% - 290px); bottom: 0px; z-index: 1;"><img src="https://deckofcardsapi.com/static/img/3D.png" alt="3 of DIAMONDS" style="transform: rotate(-40deg); left: calc(50% - 260px); bottom: 0px; z-index: 2;"><img src="https://deckofcardsapi.com/static/img/9S.png" alt="9 of SPADES" style="transform: rotate(-35deg); left: calc(50% - 230px); bottom: 0px; z-index: 3;"><img src="https://deckofcardsapi.com/static/img/QS.png" alt="QUEEN of SPADES" style="transform: rotate(-30deg); left: calc(50% - 200px); bottom: 0px; z-index: 4;"><img src="https://deckofcardsapi.com/static/img/8H.png" alt="8 of HEARTS" style="transform: rotate(-25deg); left: calc(50% - 170px); bottom: 0px; z-index: 5;"><img src="https://deckofcardsapi.com/static/img/6C.png" alt="6 of CLUBS" style="transform: rotate(-20deg); left: calc(50% - 140px); bottom: 0px; z-index: 6;"><img src="https://deckofcardsapi.com/static/img/4D.png" alt="4 of DIAMONDS" style="transform: rotate(-15deg); left: calc(50% - 110px); bottom: 0px; z-index: 7;"><img src="https://deckofcardsapi.com/static/img/QC.png" alt="QUEEN of CLUBS" style="transform: rotate(-10deg); left: calc(50% - 80px); bottom: 0px; z-index: 8;"><img src="https://deckofcardsapi.com/static/img/5H.png" alt="5 of HEARTS" style="transform: rotate(-5deg); left: calc(50% - 50px); bottom: 0px; z-index: 9;"><img src="https://deckofcardsapi.com/static/img/5S.png" alt="5 of SPADES" style="transform: rotate(0deg); left: calc(50% - 20px); bottom: 0px; z-index: 10;"><img src="https://deckofcardsapi.com/static/img/8C.png" alt="8 of CLUBS" style="transform: rotate(5deg); left: calc(50% + 10px); bottom: 0px; z-index: 11;"><img src="https://deckofcardsapi.com/static/img/8D.png" alt="8 of DIAMONDS" style="transform: rotate(10deg); left: calc(50% + 40px); bottom: 0px; z-index: 12;"><img src="https://deckofcardsapi.com/static/img/4H.png" alt="4 of HEARTS" style="transform: rotate(15deg); left: calc(50% + 70px); bottom: 0px; z-index: 13;"><img src="https://deckofcardsapi.com/static/img/QH.png" alt="QUEEN of HEARTS" style="transform: rotate(20deg); left: calc(50% + 100px); bottom: 0px; z-index: 14;"><img src="https://deckofcardsapi.com/static/img/2H.png" alt="2 of HEARTS" style="transform: rotate(25deg); left: calc(50% + 130px); bottom: 0px; z-index: 15;"><img src="https://deckofcardsapi.com/static/img/KH.png" alt="KING of HEARTS" style="transform: rotate(30deg); left: calc(50% + 160px); bottom: 0px; z-index: 16;"><img src="https://deckofcardsapi.com/static/img/KC.png" alt="KING of CLUBS" style="transform: rotate(35deg); left: calc(50% + 190px); bottom: 0px; z-index: 17;"><img src="https://deckofcardsapi.com/static/img/AC.png" alt="ACE of CLUBS" style="transform: rotate(40deg); left: calc(50% + 220px); bottom: 0px; z-index: 18;"><img src="https://deckofcardsapi.com/static/img/AS.png" alt="ACE of SPADES" style="transform: rotate(45deg); left: calc(50% + 250px); bottom: 0px; z-index: 19;"></div>
+    <button onclick="startTrick()"><i class="fa-solid fa-wand-magic-sparkles"></i> I'VE PICKED ONE</button><button onclick="shuffleDeck()"><i class="fa-solid fa-shuffle"></i> SHUFFLE THE DECK</button>
+  </div>
+  <div id="step-2" class="hidden">
+    <h2>DO YOU SEE YOUR CARD?</h2>
+    <div id="group-controls">
+      <button onclick="answer(true)"><i class="fa-solid fa-check"></i> YES</button>
+      <button onclick="answer(false)"><i class="fa-solid fa-xmark"></i> NO</button>
+    </div>
+    <div id="card-group" class="card-container"></div>
+  </div>
+  <div id="step-3" class="hidden">
+    <h2>YOU'RE THINKING OF</h2>
+    <div id="revealed-card" class="card-container final-reveal"></div>
+    <button onclick="shuffleDeck()"><i class="fa-solid fa-shuffle"></i> SHUFFLE THE DECK</button>
+  </div>
+</div>
+
+<script id="rendered-js">
+let selectedCards = [];
+let cardMap = {};
+let currentBit = 0;
+let answerBits = 0;
+const maxBits = 5;
+let fullDeck = [];
+
+const cardPickContainer = document.getElementById("card-pick");
+const groupContainer = document.getElementById("card-group");
+const revealContainer = document.getElementById("revealed-card");
+
+// Fetch cards from the Deck of Cards API
+async function fetchCards() {
+  try {
+    const res = await fetch(
+    "https://deckofcardsapi.com/api/deck/new/draw/?count=52");
+
+    const data = await res.json();
+
+    fullDeck = data.cards;
+    selectedCards = fullDeck.slice(0, 20); // Use first 20 cards for the trick
+
+    // Assign binary values to each card (1-20)
+    selectedCards.forEach((card, i) => {
+      card.binaryValue = i + 1;
+      cardMap[card.binaryValue] = card;
+    });
+
+    // Add cards to the initial selection display
+    selectedCards.forEach(card => {
+      const img = document.createElement("img");
+      img.src = card.image;
+      img.alt = `${card.value} of ${card.suit}`;
+      cardPickContainer.appendChild(img);
+    });
+
+    fanCards(cardPickContainer);
+  } catch (error) {
+    console.error("Error fetching cards:", error);
+  }
+}
+
+// Create fan effect for cards
+function fanCards(container) {
+  const cards = container.querySelectorAll("img");
+  const total = cards.length;
+  const spacing = 5; // angle spacing between cards
+  const startAngle = -Math.floor(total / 2) * spacing;
+
+  cards.forEach((card, i) => {
+    const angle = startAngle + i * spacing;
+    const offset = (i - total / 2) * 30 - 20;
+    card.style.transform = `rotate(${angle}deg)`;
+    card.style.left = `calc(50% + ${offset}px)`;
+    card.style.bottom = `0`;
+    card.style.zIndex = i;
+  });
+}
+
+// Begin the trick
+function startTrick() {
+  document.getElementById("step-1").classList.add("hidden");
+  document.getElementById("main-title").classList.add("hidden");
+  document.getElementById("step-2").classList.remove("hidden");
+  showNextGroup();
+}
+
+// Show the next group of cards based on binary position
+function showNextGroup() {
+  groupContainer.innerHTML = "";
+
+  const bit = 1 << currentBit;
+  const group = selectedCards.filter(card => (card.binaryValue & bit) !== 0);
+
+  // Get some extra cards that weren't in the selection to fill out the display
+  const availableExtras = fullDeck.filter(c => !selectedCards.includes(c));
+  const shuffledExtras = availableExtras.sort(() => Math.random() - 0.5);
+  const extras = shuffledExtras.slice(0, 14 - group.length);
+
+  // Combine and shuffle
+  const combined = [...group, ...extras].sort(() => Math.random() - 0.5);
+
+  combined.forEach(card => {
+    const img = document.createElement("img");
+    img.src = card.image;
+    img.alt = `${card.value} of ${card.suit}`;
+    groupContainer.appendChild(img);
+  });
+
+  fanCards(groupContainer);
+}
+
+// Process the user's answer
+function answer(isYes) {
+  if (isYes) answerBits += 1 << currentBit;
+  currentBit++;
+
+  if (currentBit >= maxBits) {
+    revealCard();
+  } else {
+    showNextGroup();
+  }
+}
+
+// Reveal the selected card with animation
+function revealCard() {
+  document.getElementById("step-2").classList.add("hidden");
+  document.getElementById("step-3").classList.remove("hidden");
+
+  const card = cardMap[answerBits];
+
+  if (card) {
+    // Create the main center card first
+    const mainCard = document.createElement("img");
+    mainCard.src = card.image;
+    mainCard.alt = `${card.value} of ${card.suit}`;
+    mainCard.className = "main-card"; // Special class for center card
+    revealContainer.appendChild(mainCard);
+
+    // Create floating background cards with delay
+    setTimeout(() => {
+      // Create multiple floating cards (8 copies)
+      for (let i = 0; i < 12; i++) {if (window.CP.shouldStopExecution(0)) break;
+        const img = document.createElement("img");
+        img.src = card.image;
+        img.alt = `${card.value} of ${card.suit}`;
+
+        // Randomize starting positions
+        const randomLeft = Math.random() * 100; // Random horizontal position (0-100%)
+        const randomDelay = Math.random() * 5; // Random animation delay (0-5s)
+        const randomDuration = 8 + Math.random() * 7; // Random animation duration (8-15s)
+
+        img.style.left = `${randomLeft}%`;
+        img.style.animationDelay = `${randomDelay}s`;
+        img.style.animationDuration = `${randomDuration}s`;
+
+        revealContainer.appendChild(img);
+      }window.CP.exitedLoop(0);
+    }, 800); // Delay the floating cards
+  } else {
+    revealContainer.innerHTML = `<div class="error-message">Card not found. Try again!</div>`;
+  }
+}
+
+// Reset the trick
+function shuffleDeck() {
+  document.getElementById("step-3").classList.add("hidden");
+  document.getElementById("main-title").classList.remove("hidden");
+  document.getElementById("step-1").classList.remove("hidden");
+
+  // Clear all card containers
+  cardPickContainer.innerHTML = "";
+  groupContainer.innerHTML = "";
+  revealContainer.innerHTML = "";
+
+  // Reset variables
+  currentBit = 0;
+  answerBits = 0;
+  selectedCards = [];
+  cardMap = {};
+
+  // Start fresh
+  fetchCards();
+}
+
+const isThumbnail =
+window.location.href.includes("pen") && !window.location.href.includes("edit");
+if (isThumbnail) {
+  window.addEventListener("load", () => {
+    startTrick();
+    for (let i = 0; i < maxBits; i++) {if (window.CP.shouldStopExecution(1)) break;
+      setTimeout(() => {
+        answer(Math.random() < 0.5);
+      }, i * 800);
+    }window.CP.exitedLoop(1);
+  });
+} else {
+  // Initialize the trick
+  fetchCards();
+}
+//# sourceURL=pen.js
+    </script>
+
+
+
+
+
+
+
+</body></html>
