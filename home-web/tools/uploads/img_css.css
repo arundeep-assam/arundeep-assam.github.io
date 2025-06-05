@@ -1,0 +1,719 @@
+    /* Modern & Minimalistic Color Palette */
+        :root {
+            --color-bg-primary: #F0F4F8; /* Light blue-gray for overall background */
+            --color-bg-container: #FFFFFF; /* Pure white for main content areas */
+            --color-accent-primary: #3B82F6; /* Blue-500 for primary actions and highlights */
+            --color-accent-secondary: #2563EB; /* Blue-600 for darker hover states */
+            --color-neutral-border: #D1D5DB; /* Gray-300 for borders */
+            --color-neutral-text: #4B5563; /* Gray-600 for general text */
+            --color-dark-text: #1F2937; /* Gray-900 for headings and strong text */
+            --color-button-secondary-bg: #9CA3AF; /* Gray-400 for secondary buttons */
+            --color-button-secondary-hover: #6B7280; /* Gray-500 for secondary button hover */
+            --color-dropzone-bg: #F9FAFB; /* Very light gray for dropzone */
+            --color-dropzone-border: #A5B4FC; /* Indigo-300, for a slight contrast but still soft */
+            --color-dropzone-highlight-bg: #DBEAFE; /* Blue-100 for dropzone highlight */
+            --color-dropzone-highlight-border: #60A5FA; /* Blue-400 for dropzone highlight border */
+            --color-slider-track: #E5E7EB; /* Gray-200 for slider track */
+            --color-slider-thumb: var(--color-accent-primary); /* Accent color for slider thumb */
+
+            /* Message Box Colors */
+            --color-message-info-bg: #FFFBEB; /* Yellow-50 */
+            --color-message-info-text: #92400E; /* Yellow-800 */
+            --color-message-success-bg: #ECFDF5; /* Green-50 */
+            --color-message-success-text: #047857; /* Green-800 */
+            --color-message-error-bg: #FEF2F2; /* Red-50 */
+            --color-message-error-text: #B91C1C; /* Red-800 */
+        }
+
+        /* Dark Mode Colors */
+        html[data-theme='dark'] {
+            --color-bg-primary: #1A202C; /* Darker background */
+            --color-bg-container: #2D3748; /* Darker container */
+            --color-accent-primary: #63B3ED; /* Lighter blue for accent */
+            --color-accent-secondary: #4299E1; /* Even lighter blue for hover */
+            --color-neutral-border: #4A5568; /* Darker gray border */
+            --color-neutral-text: #E2E8F0; /* Light gray text */
+            --color-dark-text: #F7FAFC; /* White text for headings */
+            --color-button-secondary-bg: #718096; /* Darker gray for secondary buttons */
+            --color-button-secondary-hover: #A0AEC0; /* Lighter gray for secondary button hover */
+            --color-dropzone-bg: #2D3748; /* Matches container background */
+            --color-dropzone-border: #4A5568; /* Darker border */
+            --color-dropzone-highlight-bg: #4A5568; /* Darker highlight */
+            --color-dropzone-highlight-border: #63B3ED; /* Accent color for highlight */
+            --color-slider-track: #4A5568; /* Darker slider track */
+            --color-slider-thumb: var(--color-accent-primary); /* Accent color for slider thumb */
+
+            /* Message Box Colors for Dark Mode */
+            --color-message-info-bg: #3A3A00; /* Darker yellow */
+            --color-message-info-text: #FFFF00; /* Brighter yellow */
+            --color-message-success-bg: #0A3A00; /* Darker green */
+            --color-message-success-text: #00FF00; /* Brighter green */
+            --color-message-error-bg: #3A0000; /* Darker red */
+            --color-message-error-text: #FF0000; /* Brighter red */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0; /* body padding */
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: var(--color-bg-container);
+            padding: 2.5rem;
+            padding-top: 4rem; /* top padding to account for fixed header */
+            border-radius: 1.25rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            max-width: 95%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            margin-top: 4rem; /* margin to push content down from fixed header */
+        }
+        /* styling for the separate drop-zone */
+        .drop-zone {
+            border: 2px dashed var(--color-dropzone-border);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            text-align: center;
+            background-color: var(--color-dropzone-bg);
+            transition: all 0.3s ease-in-out;
+            width: 100%; /* full width of container */
+            max-width: 600px; /* max width for better aesthetics */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            color: var(--color-neutral-text);
+            min-height: 150px; /* min-height as it's not holding the canvas */
+            margin-top: 2rem; /* space below the image display area */
+        }
+        .drop-zone.highlight {
+            background-color: var(--color-dropzone-highlight-bg);
+            border-color: var(--color-dropzone-highlight-border);
+        }
+        canvas {
+            border: 1px solid var(--color-neutral-border);
+            border-radius: 0.75rem;
+            background-color: var(--color-bg-primary);
+            cursor: crosshair;
+            max-width: 100%;
+            height: auto; /* aspect ratio maintained */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .btn {
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.65rem;
+            font-weight: 600;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        .btn-primary {
+            background-color: var(--color-accent-primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--color-accent-secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .btn-secondary {
+            background-color: var(--color-button-secondary-bg);
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: var(--color-button-secondary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .input-file-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            background-color: var(--color-neutral-border);
+            color: var(--color-neutral-text);
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.65rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        .input-file-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .input-file-wrapper:hover {
+            background-color: var(--color-button-secondary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        /* Container for the uploaded image (canvas) */
+        #imageCanvasContainer,
+        #croppedImageContainer {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 48%; /* side-by-side on larger screens */
+            box-sizing: border-box; /* padding and border in the element's total width and height */
+        }
+        #croppedImage {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--color-neutral-border);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);            
+        }
+        .message-box {
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: none;
+            font-weight: 500;
+        }
+        /* Specific message box colors */
+        .message-box[data-type="info"] {
+            background-color: var(--color-message-info-bg);
+            color: var(--color-message-info-text);
+        }
+        .message-box[data-type="success"] {
+            background-color: var(--color-message-success-bg);
+            color: var(--color-message-success-text);
+        }
+        .message-box[data-type="error"] {
+            background-color: var(--color-message-error-bg);
+            color: var(--color-message-error-text);
+        }
+
+        .ratio-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .ratio-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            background-color: var(--color-dropzone-highlight-bg);
+            color: var(--color-accent-primary);
+            border: 1px solid var(--color-dropzone-highlight-border);
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            width: 100%;
+        }
+        .ratio-btn:hover {
+            background-color: var(--color-accent-primary);
+            color: white;
+            border-color: var(--color-accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        .menu-button {
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.65rem;
+            font-weight: 600;
+            background-color: #10B981; /* Green-500 */
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            display: none; /* Hidden by default, shown by JS */
+        }
+        .menu-button:hover {
+            background-color: #059669; /* Green-600 */
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .control-group {
+            width: 100%;
+            max-width: 550px; /* max-width for wider sliders */
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem; /* gap between elements within control group */
+            margin-bottom: 0.5rem; /* margin-bottom for separation between control groups */
+            padding: 0.8rem; /* padding for internal space */
+            border: 1px solid var(--color-neutral-border);
+            border-radius: 0.75rem;
+            background-color: var(--color-bg-container);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+        .control-group label {
+            font-weight: 500;
+            color: var(--color-neutral-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.2rem; /* padding-bottom for label */
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 10px;
+            background: var(--color-slider-track);
+            border-radius: 5px;
+            outline: none;
+            transition: background-color .2s;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--color-slider-thumb);
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--color-slider-thumb);
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb:active,
+        .control-group input[type="range"]::-moz-range-thumb:active {
+            cursor: grabbing;
+        }
+
+        /* Top menu buttons */
+        .top-menu-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        /* Side-by-side canvas and cropped image */
+        .image-display-area {
+            display: flex;
+            flex-direction: column; /* column for small screens */
+            gap: 2.5rem;
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the start in column layout */
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .image-display-area {
+                flex-direction: row; /* Row for larger screens */
+                align-items: flex-start; /* Align items to the top in row layout */
+            }
+            .image-display-area #imageCanvasContainer,
+            .image-display-area #croppedImageContainer {
+                flex: 1; /* Distribute space equally */
+                max-width: 48%; /* Adjust max-width to leave some gap */
+            }
+            .image-display-area #croppedImageContainer {
+                margin-top: 0; /* Reset margin for row layout */
+            }
+        }
+
+        /* Pop-up base styles */
+        #cropControlsPopup, #adjustControlsPopup, #popularFiltersPopup, #imageComparisonPopup, #infoPopup {
+            position: fixed;
+            background-color: var(--color-bg-container);
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            z-index: 1000; /* Ensure popups are on top */
+            min-width: 320px;
+            max-width: 95%;
+            display: none; /* Hidden by default, controlled by JS 'show' class */
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--color-neutral-border);
+            opacity: 0; /* For fade-in/out effect */
+            visibility: hidden; /* For accessibility and to prevent interaction when hidden */
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #cropControlsPopup.show, #adjustControlsPopup.show, #popularFiltersPopup.show, #imageComparisonPopup.show, #infoPopup.show {
+            display: flex; /* Overrides display: none to show the popup */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Specific centering for non-draggable, always-centered popups */
+        #infoPopup, #imageComparisonPopup {
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Image Comparison Popup specific sizing (full screen) */
+        #imageComparisonPopup {
+            max-width: 100vw;
+            width: 100%;
+            max-height: 100vh;
+            height: 100%;
+        }
+
+        .popup-header {
+            background-color: var(--color-accent-primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            cursor: grab; /* Default for draggable popups */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            border-top-left-radius: 1.25rem;
+            border-top-right-radius: 1.25rem;
+            font-size: 1.125rem;
+        }
+        .popup-header:active {
+            cursor: grabbing;
+        }
+        /* Override cursor for non-draggable popups */
+        #imageComparisonPopup .popup-header,
+        #infoPopup .popup-header {
+            cursor: default;
+        }
+        #imageComparisonPopup .popup-header:active,
+        #infoPopup .popup-header:active {
+            cursor: default;
+        }
+
+        .close-popup-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .close-popup-btn:hover {
+            color: #E0E7FF;
+            transform: rotate(90deg);
+        }
+        .popup-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem; /* Decreased gap for overall content in popup */
+        }
+        /* New style for clear image button container */
+        .action-buttons-group {
+            margin-top: 1.5rem;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Theme Toggle Button Styles */
+        #themeToggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background-color: var(--color-button-secondary-bg);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s ease-in-out;
+            z-index: 999; /* Lower z-index than popups */
+        }
+        #themeToggle:hover {
+            background-color: var(--color-button-secondary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* New info button style - similar to themeToggle but adjusted position */
+        #infoButton {
+            position: absolute;
+            top: 1.5rem; /* Same vertical alignment as themeToggle */
+            right: 4.5rem; /* Position to the left of themeToggle (1.5rem + 40px width + 0.5rem gap) */
+            background-color: var(--color-accent-primary); /* Use accent color */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s ease-in-out;
+            z-index: 999; /* Same z-index as themeToggle */
+        }
+        #infoButton:hover {
+            background-color: var(--color-accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Popular Filters specific styles */
+        .filter-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .filter-preset-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            background-color: var(--color-dropzone-highlight-bg);
+            color: var(--color-accent-primary);
+            border: 1px solid var(--color-dropzone-highlight-border);
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            width: 100%;
+        }
+        .filter-preset-btn:hover {
+            background-color: var(--color-accent-primary);
+            color: white;
+            border-color: var(--color-accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Custom button styles for Preview and Download */
+        .btn-orange {
+            background-color: #F97316; /* Orange-500 */
+            color: white;
+        }
+        .btn-orange:hover {
+            background-color: #EA580C; /* Orange-600 */
+        }
+
+        .btn-blue {
+            background-color: #3B82F6; /* Blue-500 */
+            color: white;
+        }
+        .btn-blue:hover {
+            background-color: #2563EB; /* Blue-600 */
+        }
+
+        /* Image Comparison Popup Styles */
+        #imageComparisonPopup .popup-content { /* Target specifically for comparison popup */
+            padding: 0; /* Remove padding to maximize image area */
+            flex-grow: 1; /* Ensure it takes available vertical space */
+            display: flex;
+            flex-direction: column; /* Stack image container and labels */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .comparison-images-container {
+            flex-grow: 1; /* Allow image container to grow */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            width: 100%;
+            height: 100%;
+            --slider-x: 50%;
+        }
+
+        .comparison-image-div { /* New style for div elements */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain; /* Important: maintains aspect ratio and fits */
+            user-select: none;
+            pointer-events: none;
+        }
+        #afterImageDiv {
+            clip-path: inset(0 0 0 var(--slider-x));
+        }
+        .comparison-slider-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            border-left: 2px dashed rgba(255, 255, 255, 0.7);
+            z-index: 9;
+            left: var(--slider-x);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .comparison-slider-handle {
+            position: absolute;
+            top: 50%;
+            left: var(--slider-x);
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: var(--color-accent-primary);
+            border-radius: 50%;
+            cursor: ew-resize;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+            border: 3px solid white;
+            z-index: 10;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .comparison-slider-handle:hover {
+            background-color: var(--color-accent-secondary);
+        }
+
+        .comparison-labels-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 0.5rem; /* Decreased margin-top */
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+
+        .comparison-label {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Loading Indicator Styles */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000; /* Higher than popups */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none; /* Allow clicks through when hidden */
+        }
+
+        #loadingOverlay.show {
+            opacity: 1;
+            pointer-events: all; /* Block clicks when shown */
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid var(--color-accent-primary); /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fixed Header Styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100; /* Ensure it's above other content but below popups */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Modal Overlay for Popups */
+        #modalOverlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 999; /* Below popups, above main content */
+            visibility: hidden; /* Hidden by default */
+            opacity: 0; /* For smooth transition */
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        #modalOverlay.modal-overlay-visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Class to apply to body when a modal is active */
+        body.modal-active {
+            overflow: hidden; /* Prevent scrolling on body */
+        }
+        /* When modal is active, disable pointer events on the main container */
+        body.modal-active .container {
+            pointer-events: none;
+        }
+        /* Re-enable pointer events for the popups themselves */
+        body.modal-active #cropControlsPopup,
+        body.modal-active #adjustControlsPopup,
+        body.modal-active #popularFiltersPopup,
+        body.modal-active #imageComparisonPopup,
+        body.modal-active #infoPopup {
+            pointer-events: auto;
+        }
+
+        /* Specific style for info popup text in light mode */
+        html:not([data-theme='dark']) #infoPopup .popup-content p {
+            color: black; /* Force black text in light mode */
+        }
