@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArunDeep - Image Editor</title>
+    <link rel="icon" type="image/x-icon" href="./uploads/ArunDeepLogo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel='stylesheet' href='./uploads/img_css.css' type='text/css' media='all' />
+</head>
+
+<body>
+    <!-- Top Banner -->
+    <div class="fixed-header bg-gradient-to-r from-red-900 to-indigo-900 text-white p-4 text-center text-2xl font-bold">
+        <center><a href="https://arundeep-assam.github.io/"><img src="./uploads/ArunDeepLogo.png" width="70px"></a></center>        
+    </div>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-4" style="color: var(--color-dark-text);"><b>ArunDeep</b> - <i>Image Editor</i></h1>
+
+        <button id="themeToggle" title="Toggle Light/Dark Mode" aria-label="Toggle Light and Dark Mode">
+            🌙 </button>
+        
+        <button id="infoButton" class="absolute top-1.5rem right-14 text-white bg-blue-500 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold shadow-md transition-all duration-250 ease-in-out hover:bg-blue-600 hover:translate-y-[-2px] hover:shadow-lg" title="Information" aria-label="Information about the editor">
+            ?
+        </button>
+
+        <div class="top-menu-buttons">
+            <button id="toggleCropControlsBtn" class="menu-button">Show Crop Controls</button>
+            <button id="togglePopularFiltersBtn" class="menu-button">Show Popular Filters</button>
+            <button id="toggleAdjustControlsBtn" class="menu-button">Show Image Adjustments</button>
+        </div>
+
+        <div class="image-display-area">
+            <!-- original image canvas -->
+            <div id="imageCanvasContainer" style="display: none;">
+                <h2 class="text-2xl font-semibold" style="color: var(--color-dark-text);">Uploaded Image:</h2>
+                <canvas id="imageCanvas"></canvas>
+                
+                <button id="clearImageBtn" class="btn btn-secondary mt-4" style="display: none;">Clear Image</button>
+            </div>
+            
+            <!-- result image -->
+            <div id="croppedImageContainer" style="display: none;">
+                <h2 class="text-2xl font-semibold" style="color: var(--color-dark-text);">Result Image:</h2>
+                <img id="croppedImage" alt="Result Image">
+                
+                <button id="previewBtn" class="btn btn-orange mt-4" style="display: none;">Preview</button>
+                <button id="downloadBtn" class="btn btn-blue mt-4" style="display: none;">Download Result</button>
+            </div>
+        </div>
+
+        <!-- drop zone -->
+        <div id="dropZone" class="drop-zone">
+            <p class="text-lg" style="color: var(--color-neutral-text);">Drag & Drop your image here</p>
+            <p style="color: var(--color-neutral-text);">- OR -</p>
+            <div class="input-file-wrapper">
+                <span>Choose Image</span>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+        </div>
+
+
+        <div id="cropControlsPopup">
+            <div class="popup-header">
+                <span>Crop Controls</span>
+                <button class="close-popup-btn" id="closeCropPopupBtn">&times;</button>
+            </div>
+            <div class="popup-content">
+                <div class="ratio-buttons">
+                    <button class="ratio-btn" data-ratio="1:1">1:1 (Square)</button>
+                    <button class="ratio-btn" data-ratio="4:3">4:3</button>
+                    <button class="ratio-btn" data-ratio="3:4">3:4</button>
+                    <button class="ratio-btn" data-ratio="16:9">16:9</button>
+                    <button class="ratio-btn" data-ratio="9:16">9:16</button>
+                    <button class="ratio-btn" data-ratio="original">Original Ratio</button>
+                    <button class="ratio-btn" data-ratio="free">Freeform</button>
+                </div>
+
+                <div class="button-group">
+                    <button id="cropBtn" class="btn btn-primary">Crop Image</button>
+                    <button id="resetCropBtn" class="btn btn-secondary">Reset Crop</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="popularFiltersPopup">
+            <div class="popup-header">
+                <span>Popular Filters</span>
+                <button class="close-popup-btn" id="closePopularFiltersPopupBtn">&times;</button>
+            </div>
+            <div class="popup-content">
+                <div id="filterButtonsContainer" class="filter-buttons-grid">
+                    </div>
+                <button id="resetPopularFiltersBtn" class="btn btn-secondary">Reset All Filters</button>
+            </div>
+        </div>
+
+        <div id="adjustControlsPopup">
+            <div class="popup-header">
+                <span>Image Adjustments</span>
+                <button class="close-popup-btn" id="closeAdjustPopupBtn">&times;</button>
+            </div>
+            <div class="popup-content">
+                <div class="control-group">
+                    <label for="brightness">Brightness: <span id="brightnessValue">100%</span></label>
+                    <input type="range" id="brightness" min="0" max="200" value="100" aria-label="Brightness adjustment slider">
+                </div>
+                <div class="control-group">
+                    <label for="contrast">Contrast: <span id="contrastValue">100%</span></label>
+                    <input type="range" id="contrast" min="0" max="200" value="100" aria-label="Contrast adjustment slider">
+                </div>
+                <div class="control-group">
+                    <label for="saturation">Saturation: <span id="saturationValue">100%</span></label>
+                    <input type="range" id="saturation" min="0" max="200" value="100" aria-label="Saturation adjustment slider">
+                </div>
+                <div class="control-group">
+                    <label for="grayscale">Grayscale: <span id="grayscaleValue">0%</span></label>
+                    <input type="range" id="grayscale" min="0" max="100" value="0" aria-label="Grayscale adjustment slider">
+                </div>
+                <div class="control-group">
+                    <label for="sepia">Sepia: <span id="sepiaValue">0%</span></label>
+                    <input type="range" id="sepia" min="0" max="100" value="0" aria-label="Sepia adjustment slider">
+                </div>
+                <button id="resetAdjustmentsBtn" class="btn btn-secondary">Reset Adjustments</button>
+            </div>
+        </div>
+
+        <!-- Info Popup -->
+        <div id="infoPopup">
+            <div class="popup-header">
+                <span>Information</span>
+                <button class="close-popup-btn" id="closeInfoPopupBtn">&times;</button>
+            </div>
+            <div class="popup-content">
+                <p class="text-gray-700 dark:text-gray-200">
+                    This application is developed by ArunDeep Apps and is intended for free use.
+                    <br>Drag and drop an image or select one from your device.
+                    Use the controls to crop, apply popular filters, or adjust brightness, contrast, saturation, grayscale, and sepia.
+                    The "Preview" button allows you to compare the original and edited versions of your image.
+                    <br>P.S. - No images are stored in any server. All images are processed locally in the browser.                     
+                </p>
+            </div>
+        </div>
+
+        <div id="imageComparisonPopup" class="image-comparison-popup">
+            <div class="popup-header">
+                <span>Compare</span>
+                <button class="close-popup-btn" id="closeComparisonPopupBtn">&times;</button>
+            </div>
+            <div class="popup-content">
+                <div class="comparison-images-container">
+                    <div id="beforeImageDiv" class="comparison-image-div"></div>
+                    <div id="afterImageDiv" class="comparison-image-div"></div>
+                    <div id="comparisonHandle" class="comparison-slider-handle"></div>
+                    <div class="comparison-slider-line"></div>
+                </div>
+                <div class="comparison-labels-container">
+                    <span class="comparison-label">ORIGINAL</span>
+                    <span class="comparison-label">EDITED</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="messageBox" class="message-box" data-type="info" role="status" aria-live="polite"></div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Modal Overlay for Popups -->
+        <div id="modalOverlay"></div>
+    </div>
+
+<script type='text/javascript' src='./uploads/img_js.js'></script>
+</body>
+</html>
