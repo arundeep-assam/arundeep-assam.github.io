@@ -1,0 +1,363 @@
+    /* CSS Variables for colors - easier theme switching */
+        :root {
+            --color-body-bg: #f3f4f6;
+            --color-panel-bg: #ffffff;
+            --color-display-bg: #4a5568;
+            --color-display-text: #e2e8f0;
+            --color-previous-operand: #a0aec0;
+            --color-button-bg: #edf2f7;
+            --color-button-text: #2d3748;
+            --color-operator-bg: #90cdf4;
+            --color-operator-text: #2c5282;
+            --color-equals-bg: #68d391;
+            --color-equals-text: #2f855a;
+            --color-clear-bg: #fc8181;
+            --color-clear-text: #c53030;
+            --color-backspace-bg: #a0aec0;
+            --color-backspace-text: #2d3748;
+            --color-history-item-bg: #edf2f7;
+            --color-history-item-text: #4a5568;
+            --color-history-title: #2d3748;
+            --color-toggle-bg-light: #e2e8f0;
+            --color-toggle-text-light: #4a5568;
+            --color-toggle-bg-dark: #4a5568;
+            --color-toggle-text-dark: #e2e8f0;
+            /* Highlight color for keyboard input */
+            --color-active-key-highlight: #d1d5db; /* A light gray */
+        }
+
+        /* Dark Mode styles applied when 'dark-mode' class is on <html> */
+        html.dark-mode {
+            --color-body-bg: #1a202c;
+            --color-panel-bg: #2d3748;
+            --color-display-bg: #1a202c;
+            --color-display-text: #e2e8f0;
+            --color-previous-operand: #cbd5e0;
+            --color-button-bg: #4a5568;
+            --color-button-text: #e2e8f0;
+            --color-operator-bg: #63b3ed;
+            --color-operator-text: #e2e8f0;
+            --color-equals-bg: #48bb78;
+            --color-equals-text: #e2e8f0;
+            --color-clear-bg: #e53e3e;
+            --color-clear-text: #e2e8f0;
+            --color-backspace-bg: #718096;
+            --color-backspace-text: #e2e8f0;
+            --color-history-item-bg: #4a5568;
+            --color-history-item-text: #e2e8f0;
+            --color-history-title: #e2e8f0;
+            --color-toggle-bg-light: #2d3748;
+            --color-toggle-text-light: #e2e8f0;
+            --color-active-key-highlight: #6b7280; /* A darker gray for dark mode highlight */
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--color-body-bg); /* Use CSS variable */
+            display: flex;
+            flex-direction: column; /* Changed to column to stack main-container and footer */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease; /* Smooth transition for theme change */
+            position: relative; /* Make body a positioning context for the toggle */
+        }
+
+        .main-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 1000px;
+            width: 100%;
+            flex-grow: 1; /* Allow main content to grow and push footer down */
+            margin-top: 3rem; /* Add margin to prevent content from being hidden by the toggle */
+        }
+
+        .calculator {
+            background-color: var(--color-panel-bg); /* Use CSS variable */
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 90%;
+            max-width: 360px;
+            padding: 1.5rem;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        .display {
+            background-color: var(--color-display-bg); /* Use CSS variable */
+            color: var(--color-display-text); /* Use CSS variable */
+            padding: 1.5rem 1rem;
+            text-align: right;
+            font-size: 2.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            word-wrap: break-word;
+            height: 7rem; /* Fixed height for display */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .previous-operand {
+            font-size: 1rem;
+            color: var(--color-previous-operand); /* Use CSS variable */
+            min-height: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .current-operand {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            flex-grow: 1;
+        }
+
+        .button {
+            background-color: var(--color-button-bg); /* Use CSS variable */
+            color: var(--color-button-text); /* Use CSS variable */
+            padding: 1.5rem 0.5rem;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, color 0.3s ease; /* Add color transition */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .button:hover {
+            filter: brightness(0.95); /* Slightly darker on hover */
+            transform: translateY(-2px);
+        }
+
+        .button:active,
+        .button.active-key { /* New style for active key highlight */
+            transform: translateY(0);
+            background-color: var(--color-active-key-highlight); /* Use highlight color */
+            transition: background-color 0.05s; /* Faster transition for tap effect */
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        .operator {
+            background-color: var(--color-operator-bg); /* Use CSS variable */
+            color: var(--color-operator-text); /* Use CSS variable */
+        }
+
+        .clear {
+            background-color: var(--color-clear-bg); /* Use CSS variable */
+            color: var(--color-clear-text); /* Use CSS variable */
+        }
+
+        .backspace {
+            background-color: var(--color-backspace-bg); /* Use CSS variable */
+            color: var(--color-backspace-text); /* Use CSS variable */
+        }
+
+        .equals {
+            background-color: var(--color-equals-bg); /* Use CSS variable */
+            color: var(--color-equals-text); /* Use CSS variable */
+        }
+
+        /* Adjust hover for specific buttons to use brightness filter for consistency */
+        .operator:hover, .equals:hover, .clear:hover, .backspace:hover {
+            filter: brightness(0.95);
+        }
+        /* No active-key style for operators, clear, backspace, equals unless explicitly needed */
+        /* because their active states are defined by their specific background colors */
+
+
+        .history-panel {
+            background-color: var(--color-panel-bg); /* Use CSS variable */
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 300px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        .history-panel h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-history-title); /* Use CSS variable */
+            margin-bottom: 1rem;
+            text-align: center;
+            flex-shrink: 0;
+            transition: color 0.3s ease;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column-reverse;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .history-list li {
+            background-color: var(--color-history-item-bg); /* Use CSS variable */
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--color-history-item-text); /* Use CSS variable */
+            word-wrap: break-word;
+            line-height: 1.3;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .history-list li:last-child {
+            margin-top: 0;
+        }
+
+        /* Theme toggle button specific styles */
+        #theme-toggle {
+            background-color: var(--color-toggle-bg-light);
+            color: var(--color-toggle-text-light);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed; /* Changed from absolute to fixed to stay in viewport */
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000; /* Increased z-index to ensure it's always on top */
+            border: none;
+            padding: 0.75rem; /* Standardized padding */
+            border-radius: 9999px; /* Full rounded circle */
+        }
+        #theme-toggle:hover {
+            filter: brightness(0.9);
+        }
+
+        /* Footer styles */
+        .footer-note {
+            margin-top: 2rem; /* Space above the footer */
+            color: var(--color-button-text); /* Use a relevant text color variable */
+            font-size: 0.8rem;
+            text-align: center;
+            width: 100%; /* Ensure it spans full width */
+            padding: 0.5rem 1rem;
+            opacity: 0.7; /* Decreased opacity */
+            transition: color 0.3s ease, opacity 0.3s ease; /* Add opacity transition */
+        }
+
+        /* Clear history button styles */
+        #clear-history-button {
+            background-color: #fca5a5; /* A light red color, similar to clear button */
+            color: #b91c1c; /* Darker red text */
+            font-size: 0.9rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, color 0.3s ease;
+            margin-top: 1rem; /* Space from the history panel */
+            align-self: center; /* Center the button in the history panel */
+            width: fit-content; /* Adjust width to content */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        #clear-history-button:hover {
+            background-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        #clear-history-button:active {
+            transform: translateY(0);
+            background-color: #dc2626;
+        }
+
+        /* Dark mode specific styles for clear history button */
+        html.dark-mode #clear-history-button {
+            background-color: #ef4444; /* Darker red for dark mode */
+            color: #e2e8f0; /* Light text */
+        }
+        html.dark-mode #clear-history-button:hover {
+            background-color: #dc2626;
+        }
+        html.dark-mode #clear-history-button:active {
+            background-color: #b91c1c;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 3rem; /* Keep margin for toggle at top */
+            }
+            .calculator, .history-panel {
+                width: 95%;
+                max-width: 360px;
+            }
+            .history-panel {
+                margin-top: 2rem;
+                min-height: 200px;
+                height: auto;
+            }
+            .display {
+                font-size: 2rem;
+                padding: 1rem 0.75rem;
+                height: 7rem; /* Keep 7rem height for small screens */
+            }
+            .previous-operand {
+                font-size: 0.9rem;
+            }
+            .current-operand {
+                font-size: 2rem;
+            }
+            .button {
+                font-size: 1.2rem;
+                padding: 1.2rem 0.5rem;
+            }
+            .buttons {
+                gap: 0.75rem;
+            }
+            /* Adjust toggle position for smaller screens if needed */
+            #theme-toggle {
+                top: 1rem; /* Consistent top position */
+                right: 1rem; /* Consistent right position */
+                padding: 0.75rem;
+                width: 2.5rem; /* Make it a bit smaller */
+                height: 2.5rem;
+            }
+            #clear-history-button {
+                margin-top: 1rem; /* Adjust margin for smaller screens */
+            }
+        }
+
+        /* Fixed Header Styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 10%;
+            margin-top: 1rem;
+            z-index: 100; /* Ensure it's above other content but below popups */
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+        }
