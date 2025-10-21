@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArunDeep - Tic-Tac-Toe</title>
+    <link rel="icon" type="image/x-icon" href="./uploads/ArunDeepLogo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel='stylesheet' href='./uploads/tic_css.css' type='text/css' media='all' />
+    <style>
+        
+    </style>
+</head>
+<body class="selection:bg-gray-600 selection:text-white">
+
+    <!-- Top Banner -->
+    <div class="fixed-header">
+        <center><a href="https://arundeep-assam.github.io/"><img src="./uploads/ArunDeepLogo.png" width="70px"></a></center>        
+    </div>
+
+    <!-- Main game container -->
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700 max-w-lg w-full flex flex-col items-center space-y-6">
+        <h1 class="text-4xl font-bold text-center tracking-wide">Tic-Tac-Toe</h1>
+        <!-- Status display -->
+        <div id="status" class="text-xl font-medium text-center h-8">X goes first</div>
+
+        <!-- Game board -->
+        <div id="game-board" class="board">
+            <div class="cell" data-index="0" aria-label="Cell 0"><div class="cell-content"></div></div>
+            <div class="cell" data-index="1" aria-label="Cell 1"><div class="cell-content"></div></div>
+            <div class="cell" data-index="2" aria-label="Cell 2"><div class="cell-content"></div></div>
+            <div class="cell" data-index="3" aria-label="Cell 3"><div class="cell-content"></div></div>
+            <div class="cell" data-index="4" aria-label="Cell 4"><div class="cell-content"></div></div>
+            <div class="cell" data-index="5" aria-label="Cell 5"><div class="cell-content"></div></div>
+            <div class="cell" data-index="6" aria-label="Cell 6"><div class="cell-content"></div></div>
+            <div class="cell" data-index="7" aria-label="Cell 7"><div class="cell-content"></div></div>
+            <div class="cell" data-index="8" aria-label="Cell 8"><div class="cell-content"></div></div>
+            <!-- The winning line element -->
+            <div id="winning-line"></div>
+        </div>
+
+        <!-- Restart button -->
+        <button id="restart-button" class="mt-6 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full shadow-lg transition-colors">
+            Restart Game
+        </button>
+    </div>
+
+    <!-- Sample Footer -->
+    <footer class="text-center text-gray-500 text-sm mt-4">
+        THIS GAME IS DEVELOPED BY <B>ARUNDEEP APPS</B> AND IS INTENDED FOR FREE USE.
+    </footer>
+
+    <script type='text/javascript' src='./uploads/tic_js.js'></script>
+
+</body>
+</html>
