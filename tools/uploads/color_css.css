@@ -1,0 +1,537 @@
+/* CSS Variables for theming */
+        :root {
+            --bg-color: #f7fafc; /* Light gray background */
+            --text-color-primary: #2d3748; /* Dark gray text for main elements */
+            --text-color-secondary: #4a5568; /* Medium gray text for labels, descriptions */
+            --card-bg: white;
+            --border-color: #cbd5e0; /* Gray-300 */
+            --highlight-bg: #ebf4ff; /* Light blue for hover/active states */
+            --highlight-border: #4a90e2; /* Blue border for highlights */
+            --value-bg: #edf2f7; /* Gray-200 for value display fields */
+            --copy-icon-color: #4a90e2;
+            --copy-icon-hover-color: #357bd8;
+            --button-bg: #4a90e2;
+            --button-hover-bg: #357bd8;
+            --red-button-bg: #ef4444; /* red-500 */
+            --red-button-hover-bg: #dc2626; /* red-600 */
+            --pixel-light: #d17a1a; /* Original orange pixel */
+            --pixel-dark: #3b2c24;  /* Original darker brown pixel */
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a202c; /* Dark background */
+            --text-color-primary: #e2e8f0; /* Light gray text */
+            --text-color-secondary: #a0aec0; /* Lighter gray text */
+            --card-bg: #2d3748; /* Darker card background */
+            --border-color: #4a5568; /* Darker gray border */
+            --highlight-bg: #4a5568; /* Darker blue */
+            --highlight-border: #63b3ed; /* Lighter blue */
+            --value-bg: #4a5568; /* Dark gray for value fields */
+            --copy-icon-color: #90cdf4; /* Lighter blue for icons */
+            --copy-icon-hover-color: #63b3ed; /* Even lighter blue on hover */
+            --button-bg: #63b3ed;
+            --button-hover-bg: #4299e1;
+            --red-button-bg: #ef4444; /* red-500 */
+            --red-button-hover-bg: #dc2626; /* red-600 */
+            --pixel-light: #4a5568; /* Dark mode light pixel */
+            --pixel-dark: #2d3748;  /* Dark mode dark pixel */
+        }
+
+        /* Custom styles for the color picker to match the image and ensure responsiveness */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color-primary); /* Applied primary text color to body */
+            display: flex;
+            flex-direction: column; /* Default to column for small screens */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column; /* Default to column for small screens */
+            align-items: center;
+            gap: 2rem; /* Space between components */
+            padding: 1rem; /* Add some padding for overall content */
+        }
+        @media (min-width: 768px) { /* md breakpoint for desktop layout */
+            .main-content-wrapper {
+                flex-direction: row; /* Row direction for larger screens */
+                align-items: flex-start; /* Align items at the top */
+                justify-content: center;
+            }
+        }
+
+        /* Main H1 heading style */
+        h1 {
+            color: var(--text-color-primary); /* Ensure heading color updates */
+            transition: color 0.3s ease-in-out;
+        }
+
+        .final-color-display {
+            width: 150px; /* Fixed width for the display */
+            height: 150px; /* Fixed height for the display */
+            background-color: #E89623; /* Default color */
+            border-radius: 1.5rem; /* Rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            flex-shrink: 0; /* Prevent shrinking */
+            transition: background-color 0.3s ease-in-out; /* Smooth transition */
+        }
+        @media (max-width: 767px) { /* Adjust for smaller screens */
+            .final-color-display {
+                width: 100px;
+                height: 100px;
+                margin-top: 1rem; /* Space from heading */
+            }
+        }
+
+
+        .color-picker-container {
+            background-color: var(--card-bg);
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* Deeper shadow */
+            padding: 2rem;
+            max-width: 90%; /* Reverted to 90% for responsiveness */
+            width: 400px; /* Reverted to 400px as max-width for desktop, width handles fluid behavior */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; /* For the dropdown */
+            transition: background-color 0.3s ease-in-out;
+        }
+        .color-display-area {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* 4:3 aspect ratio for the main color area */
+            background-color: #f0f0f0; /* Default background, not themed for consistency with color logic */
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .color-display-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Flipped horizontally */
+            transform: scaleX(-1);
+        }
+        .hue-slider-container {
+            width: 100%;
+            height: 20px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 0.5rem;
+            overflow: hidden; /* Ensure slider background is contained */
+            background: linear-gradient(to right,
+                rgb(255, 0, 0),    /* Red */
+                rgb(255, 255, 0),  /* Yellow */
+                rgb(0, 255, 0),    /* Green */
+                rgb(0, 255, 255),  /* Cyan */
+                rgb(0, 0, 255),    /* Blue */
+                rgb(255, 0, 255),  /* Magenta */
+                rgb(255, 0, 0)     /* Red */
+            );
+            cursor: pointer; /* Indicate it's clickable */
+        }
+        .hue-slider-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: grab;
+            border: 2px solid white; /* White border for the thumb */
+        }
+        .color-info-row { /* New class for the rows */
+            display: flex;
+            justify-content: center; /* Center the single item in the row */
+            width: 100%;
+            margin-bottom: 0.75rem; /* Spacing between rows */
+        }
+        /* Style for rows with multiple items */
+        .color-info-row.multi-item {
+            justify-content: space-between; /* Distribute items with space between them */
+        }
+
+        .color-info-grid-item { /* Renamed for clarity in the new structure */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Specific styling for items within multi-item rows */
+        .color-info-row.multi-item .color-info-grid-item {
+            flex: 1; /* Allow items to grow and shrink within their row */
+            margin: 0 0.375rem; /* Half of gap to distribute spacing */
+        }
+        .color-info-row.multi-item .color-info-grid-item:first-child {
+            margin-left: 0;
+        }
+        .color-info-row.multi-item .color-info-grid-item:last-child {
+            margin-right: 0;
+        }
+
+        /* Specific styles for the Hex row to accommodate label above and value+icon side-by-side */
+        .color-info-row.hex-row {
+            flex-direction: column; /* Stack the label and the value/icon group */
+            align-items: center; /* Center content horizontally */
+        }
+        .hex-value-and-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 180px; /* Maintain max width for desktop */
+            margin-top: 0.25rem; /* Small space between label and value/icon */
+        }
+
+        .color-info-label {
+            font-size: 0.875rem; /* sm text */
+            color: var(--text-color-secondary);
+            margin-bottom: 0.25rem; /* Space below label */
+            transition: color 0.3s ease-in-out;
+        }
+        .color-info-value { /* Base style for value displays */
+            background-color: var(--value-bg);
+            padding: 0.75rem; /* Increased padding for more vertical space */
+            border-radius: 0.5rem;
+            color: var(--text-color-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            width: 100%; /* Default to full width for responsiveness */
+            text-align: center;
+            cursor: pointer; /* Indicate it's clickable */
+            transition: background-color 0.2s ease-in-out, color 0.3s ease-in-out;
+            word-break: break-all; /* Ensure long hex codes fit */
+            flex-grow: 1; /* Allow it to grow in flex container (hex-value-and-icon) */
+            min-height: 58px; /* Set a minimum height to accommodate two lines */
+            display: flex; /* Use flex to center content vertically */
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
+        }
+        /* Specific width adjustment for RGB/CMYK/HSV/HSL fields when in a row with other fields */
+        .color-info-row.multi-item .color-info-value {
+            max-width: none; /* Override max-width when multiple items are present */
+            width: 100%; /* Ensure it takes full available width within its flex item */
+        }
+
+        .color-info-value:hover {
+            background-color: var(--border-color); /* Light gray-300 on hover, same as border */
+        }
+
+        .copy-icon-button {
+            color: var(--copy-icon-color); /* Icon color */
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            margin-left: 0.5rem; /* Space from the input field */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Prevent icon from shrinking */
+            width: 24px; /* Fixed width for the icon */
+            height: 24px; /* Fixed height for the icon */
+        }
+
+        .copy-icon-button:hover {
+            color: var(--copy-icon-hover-color); /* Darker blue on hover */
+        }
+
+        .copy-icon-button svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Tooltip styles (for JS-driven tooltips, like "Copied!" message) */
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 10;
+        }
+        .tooltip.show {
+            opacity: 1;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .color-picker-container {
+                padding: 1.5rem;
+            }
+            .color-info-row, .color-info-row.multi-item { /* Apply column direction to all rows on small screens */
+                flex-direction: column; /* Stack items vertically on small screens */
+                justify-content: center; /* Center stacked items */
+            }
+            .color-info-grid-item {
+                margin: 0.375rem 0; /* Add vertical margin for stacked items */
+                width: 100%; /* Ensure item takes full width when stacked */
+            }
+            .hex-value-and-icon { /* Ensure this container behaves correctly on small screens */
+                flex-direction: row; /* Keep hex value and icon side-by-side */
+                width: 100%; /* Take full width */
+                max-width: 100%; /* Remove max-width constraint for full responsiveness */
+                justify-content: center; /* Center the group */
+                margin-top: 0.5rem; /* Space between label and value/icon group */
+            }
+            .color-display-area {
+                padding-top: 100%; /* Make it square on small screens */
+            }
+            .color-info-value, .color-info-row.multi-item .color-info-value {
+                max-width: 100%; /* Ensure it takes full width on small screens */
+            }
+        }
+
+        /* Styles for the pixel art background (bottom-left and bottom-right corners) */
+        .pixel-background-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px; /* Height of the pixel art area */
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: -1; /* Send to background */
+            overflow: hidden; /* Hide overflowing pixels */
+        }
+
+        .pixel-row {
+            display: flex;
+            width: 100%;
+            justify-content: flex-start; /* Start from the left */
+        }
+
+        .pixel {
+            width: 20px; /* Size of each pixel */
+            height: 20px;
+            background-color: var(--pixel-light); /* Light pixel color, theme-aware */
+            flex-shrink: 0; /* Prevent pixels from shrinking */
+            border-radius: 0.25rem; /* Slightly rounded pixels */
+            transition: background-color 0.3s ease-in-out;
+        }
+        .pixel-dark {
+            background-color: var(--pixel-dark); /* Dark pixel color, theme-aware */
+            transition: background-color 0.3s ease-in-out;
+        }
+        .pixel-bg-wrapper {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px; /* Define height for the background wrapper */
+            overflow: hidden;
+        }
+        .pixel-bg-left {
+            left: -50px; /* Start off-screen to create partial pattern */
+        }
+        .pixel-bg-right {
+            right: -50px; /* Start off-screen to create partial pattern */
+            transform: scaleX(-1); /* Flip horizontally to mirror the pattern */
+        }
+
+        /* Styles for the cursor/selector on the main color canvas */
+        .color-selector {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white; /* White border */
+            box-shadow: 0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5); /* Black outline and shadow */
+            /* Flip selector back so it appears normal on the flipped canvas */
+            transform: translate(-50%, -50%) scaleX(-1);
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+
+        /* --- Image Picker Section Styles --- */
+        .image-picker-section {
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 1.5rem;
+            max-width: 90%;
+            width: 400px; /* Consistent width with color picker */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .image-upload-area {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed var(--border-color);
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text-color-secondary);
+            cursor: pointer;
+            transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out, color 0.3s ease-in-out;
+            padding: 1rem;
+            box-sizing: border-box; /* Include padding in width/height */
+        }
+
+        .image-upload-area:hover, .image-upload-area.drag-over {
+            border-color: var(--highlight-border);
+            background-color: var(--highlight-bg);
+        }
+
+        .uploaded-image-container {
+            position: relative;
+            width: 100%;
+            max-height: 300px; /* Max height for image preview */
+            overflow: hidden;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            display: none; /* Hidden by default */
+            cursor: crosshair; /* Crosshair when picking color */
+        }
+        .uploaded-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0.75rem;
+        }
+
+        .image-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Set default display to none for clearImageButton */
+        #clearImageButton {
+            display: none; /* Hidden by default */
+        }
+        .image-control-button { /* Generic styles for all image control buttons */
+            background-color: var(--button-bg);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            font-weight: 600;
+        }
+
+        .image-control-button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Specific for clear image button */
+        .image-control-button.clear-button {
+            background-color: var(--red-button-bg);
+        }
+        .image-control-button.clear-button:hover {
+            background-color: var(--red-button-hover-bg);
+        }
+
+
+        /* Hidden canvas for image data processing */
+        #imagePickCanvas {
+            display: none;
+        }
+
+        /* Pointer for color picking on image */
+        .color-pick-pointer {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px black;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none; /* Hidden by default */
+        }
+
+        /* Styles for the zoom preview */
+        .image-zoom-preview {
+            position: absolute;
+            width: 100px; /* Fixed size for the preview window */
+            height: 100px;
+            border: 2px solid var(--highlight-border); /* Blue border */
+            border-radius: 0.5rem;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            overflow: hidden; /* Hide anything outside the preview */
+            display: none; /* Hidden by default */
+            z-index: 100; /* Ensure it's on top */
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+
+        .zoom-canvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated; /* Crucial for clear pixel zoom */
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            display: block;
+        }
+
+        .zoom-pointer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 2px;
+            background-color: red; /* Small red dot in the center */
+            border-radius: 50%;
+            box-shadow: 0 0 0 1px white; /* White outline for visibility */
+        }
+
+        /* Dark mode switch styling */
+        .theme-switch-container {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 200; /* Ensure it's on top */
+        }
+        .theme-switch-button {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem; /* Rounded corners */
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-color-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+        .theme-switch-button:hover {
+            background-color: var(--value-bg);
+        }
+        .theme-switch-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor; /* Use current text color for SVG */
+            transition: fill 0.3s ease-in-out;
+        }
+
+        /* Fixed Header Styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 10%;
+            margin-top: 1rem;
+            z-index: 100; /* Ensure it's above other content but below popups */
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+        }

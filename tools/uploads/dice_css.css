@@ -1,0 +1,244 @@
+/* Custom properties for colors */
+        :root {
+            --bg-color: #f0f4f8;
+            --text-color: #2c3e50;
+            --dice-bg: #ffffff;
+            --dice-border: #2c3e50;
+            --dot-color: #2c3e50;
+            --button-bg: #3498db;
+            --button-hover-bg: #2980b9;
+        }
+
+        /* Dark mode overrides */
+        body.dark-mode {
+            --bg-color: #1a202c; /* Dark background */
+            --text-color: #e2e8f0; /* Light text */
+            --dice-bg: #2d3748; /* Darker dice */
+            --dice-border: #a0aec0; /* Lighter border */
+            --dot-color: #e2e8f0; /* Light dots */
+            --button-bg: #4299e1; /* Slightly lighter blue button */
+            --button-hover-bg: #3182ce; /* Darker hover for dark mode */
+        }
+
+        /* Custom font for a clean look */
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars */
+            transition: background-color 0.3s ease; /* Smooth theme transition */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Centering the content on the page */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* Horizontally centers all direct flex children */
+            min-height: 100vh; /* Full viewport height */
+            position: relative;
+            perspective: 250px; /* Adjusted perspective for a stronger 3D effect to show one face */
+            width: 100%; /* Make the container span the full width */
+        }
+
+        /* Adjust heading margin to move it higher */
+        .container h1 {
+            margin-bottom: 0.5rem; /* Reduced margin to bring "or drag" closer */
+            margin-top: -5rem;
+            color: var(--text-color); /* Apply text color variable */
+        }
+
+        /* Style for the "or drag" text */
+        .drag-text {
+            color: var(--text-color);
+            font-size: 1rem;
+            margin-bottom: 5rem; /* Increased space below "or drag" to separate from dice */
+            transition: color 0.3s ease;
+        }
+
+        /* Dice container for the 3D cube */
+        .dice-container {
+            width: 100px;
+            height: 100px;
+            position: relative; /* Keep relative for inner faces */
+            transform-style: preserve-3d;
+            transition: transform 1.5s ease-out;
+            cursor: grab; /* Indicate draggable */
+            transform-origin: center center; /* Ensure rotation from center */
+            margin-bottom: 5rem;
+        }
+        .dice-container:active {
+            cursor: grabbing;
+        }
+
+
+        /* Individual faces of the dice */
+        .face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: var(--dice-bg); /* Apply dice background color variable */
+            border: 2px solid var(--dice-border); /* Apply dice border color variable */
+            border-radius: 0.75rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--dot-color); /* Apply dot color variable (though dots are separate divs) */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Dot styling within faces */
+        .dot {
+            width: 15px;
+            height: 15px;
+            background-color: var(--dot-color); /* Apply dot color variable */
+            border-radius: 50%;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+        /* Layout for 2 dots */
+        .face.face-2 { display: flex; flex-direction: column; justify-content: space-between; }
+        .face.face-2 .dot:nth-child(1) { align-self: flex-start; }
+        .face.face-2 .dot:nth-child(2) { align-self: flex-end; }
+        /* Layout for 3 dots */
+        .face.face-3 { display: flex; flex-direction: column; justify-content: space-between; }
+        .face.face-3 .dot:nth-child(1) { align-self: flex-start; }
+        .face.face-3 .dot:nth-child(2) { align-self: center; }
+        .face.face-3 .dot:nth-child(3) { align-self: flex-end; }
+        /* Layout for 4 dots */
+        .face.face-4 { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); justify-items: center; align-items: center; padding: 10px; }
+        /* Layout for 5 dots */
+        .face.face-5 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            justify-items: center;
+            align-items: center;
+            padding: 10px;
+        }
+        .face.face-5 .dot:nth-child(1) { grid-column: 1; grid-row: 1; }
+        .face.face-5 .dot:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .face.face-5 .dot:nth-child(3) { grid-column: 1; grid-row: 2; }
+        .face.face-5 .dot:nth-child(4) { grid-column: 2; grid-row: 2; }
+        .face.face-5 .dot:nth-child(5) { grid-column: 1 / span 2; grid-row: 1 / span 2; align-self: center; justify-self: center; }
+
+        /* Layout for 6 dots */
+        .face.face-6 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            justify-items: center;
+            align-items: center;
+            padding: 10px;
+        }
+        .face.face-6 .dot:nth-child(1) { grid-column: 1; grid-row: 1; }
+        .face.face-6 .dot:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .face.face-6 .dot:nth-child(3) { grid-column: 1; grid-row: 2; }
+        .face.face-6 .dot:nth-child(4) { grid-column: 2; grid-row: 2; }
+        .face.face-6 .dot:nth-child(5) { grid-column: 1; grid-row: 3; }
+        .face.face-6 .dot:nth-child(6) { grid-column: 2; grid-row: 3; }
+
+
+        /* Positioning and rotation for each face to form a cube */
+        .face-1 { transform: rotateY(0deg) translateZ(50px); }
+        .face-2 { transform: rotateY(180deg) translateZ(50px); }
+        .face-3 { transform: rotateX(90deg) translateZ(50px); }
+        .face-4 { transform: rotateX(-90deg) translateZ(50px); }
+        .face-5 { transform: rotateY(90deg) translateZ(50px); }
+        .face-6 { transform: rotateY(-90deg) translateZ(50px); }
+
+        /* Styling for the button */
+        #rollButton {
+            background-color: var(--button-bg); /* Apply button background color variable */
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 3rem; /* Keep existing margin */
+        }
+        #rollButton:hover {
+            background-color: var(--button-hover-bg); /* Apply button hover color variable */
+            transform: translateY(-2px);
+        }
+        #rollButton:active {
+            transform: translateY(0);
+        }
+
+        /* Footer styling */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: var(--text-color); /* Apply text color variable */
+            font-size: 0.9rem;
+            padding: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        /* New Theme Switch Container */
+        .theme-switch-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .theme-switch-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px; /* Add some padding */
+            border-radius: 50%; /* Make it circular */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            color: var(--text-color); /* Inherit text color for SVG fill */
+        }
+
+        .theme-switch-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* SVG icon styling */
+        .theme-switch-button svg {
+            width: 24px; /* Standard icon size */
+            height: 24px;
+            display: none; /* Hide by default, JS will manage visibility */
+        }
+
+        /* Show sun icon in light mode */
+        body:not(.dark-mode) .theme-switch-button #sunIcon {
+            display: block;
+        }
+
+        /* Show moon icon in dark mode */
+        body.dark-mode .theme-switch-button #moonIcon {
+            display: block;
+        }
+
+        /* Fixed Header Styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 10%;
+            margin-top: 1rem;
+            z-index: 100; /* Ensure it's above other content but below popups */
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+        }
