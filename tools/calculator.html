@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArunDeep - Calculator</title>
+    <link rel="icon" type="image/x-icon" href="./uploads/ArunDeepLogo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='./uploads/calc_css.css' type='text/css' media='all' />
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="fixed-header">
+        <center><a href="https://arundeep-assam.github.io/"><img src="./uploads/ArunDeepLogo.png" width="70px"></a></center>        
+    </div>
+
+
+    <!-- Theme Toggle Button - Moved to the body directly -->
+    <button id="theme-toggle" class="rounded-full shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <!-- Sun Icon (for light mode) -->
+        <svg id="theme-icon-sun" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 01-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 00-1.414-1.414L13.595 4.595a1 1 0 001.414 1.414l.707-.707zm-10.607 2.122a1 1 0 001.414-1.414L5.405 2.595a1 1 0 00-1.414 1.414l.707.707zm3.13 10.607a1 1 0 001.414 0l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 000 1.414zM4 10a1 1 0 01-1-1V8a1 1 0 012 0v1a1 1 0 01-1 1zm12 0a1 1 0 01-1-1V8a1 1 0 012 0v1a1 1 0 01-1 1zm-7 4a1 1 0 01-1 1H8a1 1 0 010-2h1a1 1 0 011 1zm-2-6a1 1 0 010-2H8a1 1 0 010 2h1z" clip-rule="evenodd" fill-rule="evenodd"></path>
+        </svg>
+        <!-- Moon Icon (for dark mode) -->
+        <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+        </svg>
+    </button>
+
+    <div class="main-container">
+        <div class="calculator">
+            <div class="display">
+                <div data-previous-operand class="previous-operand"></div>
+                <div data-current-operand class="current-operand">0</div>
+            </div>
+            <div class="buttons">
+                <button data-all-clear class="button clear span-2">AC</button>
+                <button data-delete class="button backspace">DEL</button>
+                <button data-operator class="button operator">÷</button>
+                <button data-number class="button">7</button>
+                <button data-number class="button">8</button>
+                <button data-number class="button">9</button>
+                <button data-operator class="button operator">×</button>
+                <button data-number class="button">4</button>
+                <button data-number class="button">5</button>
+                <button data-number class="button">6</button>
+                <button data-operator class="button operator">-</button>
+                <button data-number class="button">1</button>
+                <button data-number class="button">2</button>
+                <button data-number class="button">3</button>
+                <button data-operator class="button operator">+</button>
+                <button data-number class="button span-2">0</button>
+                <button data-number class="button">.</button>
+                <button data-equals class="button equals">=</button>
+            </div>
+        </div>
+
+        <div class="history-panel">
+            <h2>History</h2>
+            <ul data-history-list class="history-list">
+                <!-- History items will be inserted here -->
+            </ul>
+            <!-- Clear History Button -->
+            <button id="clear-history-button">Clear History</button>
+        </div>
+    </div>
+
+    <footer class="footer-note">
+        THIS APPLICATION IS DEVELOPED BY <B>ARUNDEEP APPS</B> AND IS INTENDED FOR FREE USE.
+    </footer>
+
+<script type='text/javascript' src='./uploads/calc_js.js'></script>
+</body>
+</html>
