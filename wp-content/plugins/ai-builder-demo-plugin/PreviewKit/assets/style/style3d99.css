@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&amp;family=Noto+Serif:wght@300;400&amp;family=Nunito:wght@300;400&amp;family=Poppins:wght@300;400&amp;family=Roboto:wght@300;400&amp;display=swap');
+
+.tbdemo-customize-container::-webkit-scrollbar {
+  width: 2px;
+}
+.tbdemo-customize-container::-webkit-scrollbar-track {
+  background-color: darkgrey;
+}
+.tbdemo-customize-container::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.tbdemo-customize-container {
+  position: fixed;
+  right: 100px;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  padding: 16px;
+  box-sizing: border-box;
+  z-index: 99999;
+  overflow-y: auto;
+  border: 1px solid #2A2F3033;
+  border-radius: 6px;
+  bottom: 100px;
+}
+
+.tbdemo-customize-descr {
+  text-align: left;
+  font: normal normal bold 12px/20px Open Sans;
+  letter-spacing: 0;
+  color: #2A2F30;
+  margin: 0;
+}
+
+.tbdemo-text-gradient {
+  background: transparent linear-gradient(213deg, #22B339 0%, #4285F4 100%) 0% 0% no-repeat padding-box;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tbdemo-customize-content {
+  margin: 15px 0;
+  z-index: 10001;
+}
+
+.tbdemo-theme-item {
+  width: 100%;
+  height: 46px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+.tbdemo-theme-item:last-child {
+  margin-bottom: 0;
+}
+
+.tbdemo-theme-item-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+  color: #212121;
+}
+
+.tbdemo-theme-item-title {
+  font: normal normal bold 10px/16px Roboto;
+}
+
+.tbdemo-theme-item-descr {
+  font: normal normal normal 10px/14px Roboto;
+  opacity: 0.8;
+}
+
+.tbdemo-color-item-cont {
+  display: flex;
+  flex-direction: column;
+}
+
+.tbdemo-color-item {
+  width: 20px;
+  height: 23px;
+}
+
+.tbdemo-customize-content .tbdemo-theme-item.tbdemo-theme-selected,
+.tbdemo-customize-content .tbdemo-theme-item:hover {
+  border-color: #2A2F30;
+}
+
+.tbdemo-customize-edit-button {
+  width: 150px;
+  height: 30px;
+  background: #2A2F30 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  font: normal normal 600 12px/30px Open Sans;
+  letter-spacing: 0.1px;
+  color: #FFFFFF;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  margin: auto;
+  z-index: 10001;
+}
+
+.tbdemo-customize-edit-button:hover,
+.tbdemo-customize-edit-button:active {
+  text-decoration: none;
+  background-color: #2A2F30CC;
+  color: #FFFFFF;
+}
+
+.tbdemo-customize-container-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
