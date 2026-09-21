@@ -3,228 +3,791 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Playground — ArunDeep Apps</title>
+<title>PLAYGROUND — ArunDeep Apps</title>
+<link rel="icon" type="image/x-icon" href="./wp-content/uploads/imgs/ArunDeepLogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --abyss:#080C14;--surface:#101828;--surface2:#1A2236;
-  --cyan:#0BFFD4;--cyan2:#00C9A7;--pink:#FF3C6E;
-  --frost:#E8EDF5;--mist:#8B96A8;--line:rgba(255,255,255,.07);
-  --fd:'Syne',sans-serif;--fb:'IBM Plex Mono',monospace;--r:4px;
+/* ─── TOKENS ─────────────────────────────────── */
+:root {
+  --black:  #080808;
+  --black2: #0F0F0F;
+  --black3: #161616;
+  --white:  #F2EDE6;
+  --white2: #C8C2BA;
+  --white3: #7A756E;
+  --accent: #D4A847;
+  --line:   rgba(242,237,230,.09);
+  --fs: 'Cormorant Garamond', Georgia, serif;
+  --fb: 'Outfit', system-ui, sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--fb);background:var(--abyss);color:var(--frost);line-height:1.6;overflow-x:hidden}
-a{text-decoration:none;color:inherit}
-::selection{background:var(--pink);color:var(--frost)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--abyss)}::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--fb);
+  background: var(--black);
+  color: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--accent); color: var(--black); }
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: rgba(242,237,230,.15); }
 
-nav{
-  position:sticky;top:0;z-index:100;height:58px;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 2.5rem;
-  background:rgba(8,12,20,.92);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);
+/* ─── CURSOR ──────────────────────────────────── */
+.cur {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--white); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s;
+  mix-blend-mode: difference;
 }
-.nav-logo{display:flex;align-items:center;gap:.55rem}
-.nav-logo img{width:28px;height:28px;object-fit:contain;filter:brightness(0) invert(1)}
-.nav-logo span{font-family:var(--fd);font-size:.98rem;font-weight:800;color:var(--frost);letter-spacing:.04em}
-.nav-logo .dot{color:var(--pink)}
-.nav-links{display:flex;list-style:none;gap:.1rem;align-items:center}
-.nav-links a{font-family:var(--fb);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mist);padding:.38rem .9rem;border-radius:var(--r);transition:color .18s,background .18s}
-.nav-links a:hover,.nav-links a.active{color:var(--pink);background:rgba(255,60,110,.07)}
-.nav-cta{border:1px solid var(--cyan);color:var(--cyan)!important;padding:.36rem 1rem!important;border-radius:var(--r)!important;margin-left:.4rem;transition:background .18s,color .18s!important}
-.nav-cta:hover{background:var(--cyan)!important;color:var(--abyss)!important}
-.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
-.nav-ham span{width:22px;height:1.5px;background:var(--mist);border-radius:2px}
+.cur.big { width: 44px; height: 44px; }
 
-.page-hero{
-  background:var(--surface);border-bottom:1px solid var(--line);
-  padding:5rem 2.5rem 4rem;position:relative;overflow:hidden;
+/* ─── VERTICAL SIDE LABEL (Sakazuki style) ────── */
+.side-label {
+  position: fixed; left: 1.4rem; top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: center;
+  font-family: var(--fb); font-size: .56rem; font-weight: 300;
+  letter-spacing: .26em; text-transform: uppercase;
+  color: rgba(242,237,230,.18); white-space: nowrap; z-index: 50;
+  pointer-events: none;
 }
-.page-hero::before{
-  content:'🎮';
-  position:absolute;right:5%;top:50%;transform:translateY(-50%);
-  font-size:18rem;opacity:.04;pointer-events:none;
-}
-.page-hero-inner{max-width:1160px;margin:0 auto;position:relative;z-index:2}
-.eyebrow{font-family:var(--fb);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pink);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
-.eyebrow::before{content:'//';opacity:.4}
-.page-hero h1{font-family:var(--fd);font-size:clamp(2.4rem,5vw,4rem);font-weight:800;color:var(--frost);letter-spacing:-.03em;line-height:1.05;margin-bottom:1rem}
-.page-hero p{font-size:.85rem;font-style:italic;color:var(--mist);max-width:460px;line-height:1.9}
 
-.crumb{background:var(--abyss);padding:.6rem 2.5rem;border-bottom:1px solid var(--line)}
-.crumb-in{max-width:1160px;margin:0 auto;font-size:.7rem;color:var(--mist);display:flex;gap:.4rem;align-items:center}
-.crumb-in a{color:var(--mist);transition:color .15s}
-.crumb-in a:hover{color:var(--pink)}
+/* ─── MOBILE MENU ─────────────────────────────── */
+.mob-menu {
+  display: none; position: fixed; inset: 0;
+  background: var(--black); z-index: 200;
+  flex-direction: column; align-items: center;
+  justify-content: center; gap: 2.5rem;
+}
+.mob-menu.open { display: flex; }
+.mob-menu a {
+  font-family: var(--fs); font-size: 3rem; font-weight: 300;
+  letter-spacing: -.01em; color: var(--white);
+  transition: color .2s;
+}
+.mob-menu a:hover { color: var(--accent); }
+.mob-menu-close {
+  position: absolute; top: 1.5rem; right: 2rem;
+  font-family: var(--fb); font-size: .7rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--white3); cursor: pointer;
+}
 
-.play-sec{padding:4rem 2.5rem 5.5rem}
-.play-sec .inner{max-width:1160px;margin:0 auto}
-.play-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-  gap:1px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:2.5rem;
+/* ─── NAV ─────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 60px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8,8,8,.92);
+  backdrop-filter: blur(24px);
 }
-.play-card{
-  background:var(--surface);padding:2rem 1.8rem;
-  display:flex;flex-direction:column;gap:.8rem;
-  position:relative;overflow:hidden;
-  transition:background .2s;
+.nav-left, .nav-right {
+  display: flex; align-items: center; gap: .1rem; list-style: none;
 }
-.play-card:hover{background:var(--surface2)}
-.play-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--pink),transparent);
-  transform:scaleX(0);transition:transform .35s ease;
+.nav-right { justify-content: flex-end; }
+.nav-left li a, .nav-right li a {
+  font-family: var(--fb); font-size: .62rem; font-weight: 300;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--white3); padding: .4rem .75rem;
+  transition: color .25s;
 }
-.play-card:hover::before{transform:scaleX(1)}
-.play-emoji{font-size:2.5rem;line-height:1;margin-bottom:.4rem}
-.play-badge{
-  display:inline-block;font-family:var(--fb);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--pink);border:1px solid rgba(255,60,110,.3);
-  padding:.2rem .6rem;border-radius:var(--r);margin-bottom:.2rem;width:fit-content;
+.nav-left li a:hover, .nav-right li a:hover,
+.nav-left li a.active, .nav-right li a.active { color: var(--white); }
+.nav-center {
+  display: flex; flex-direction: column; align-items: center; gap: .08rem;
 }
-.play-card h3{font-family:var(--fd);font-size:1.1rem;font-weight:700;color:var(--frost)}
-.play-card p{font-size:.78rem;font-style:italic;color:var(--mist);line-height:1.75;flex:1}
-.play-link{
-  display:inline-flex;align-items:center;gap:.4rem;
-  font-family:var(--fb);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--pink);border:1px solid rgba(255,60,110,.3);
-  padding:.45rem .95rem;border-radius:var(--r);align-self:flex-start;
-  transition:background .15s,color .15s;margin-top:.5rem;
+.nav-center img {
+  width: 26px; height: 26px; object-fit: contain;
+  filter: brightness(0) invert(1); opacity: .8;
 }
-.play-link:hover{background:var(--pink);color:var(--frost)}
+.nav-center span {
+  font-family: var(--fs); font-size: .6rem; font-weight: 400;
+  letter-spacing: .32em; text-transform: uppercase; color: var(--white3);
+}
+.nav-cta-pill {
+  font-family: var(--fb); font-size: .58rem; font-weight: 400;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--black) !important; background: var(--white);
+  padding: .32rem .85rem; margin-left: .5rem;
+  transition: background .2s;
+}
+.nav-cta-pill:hover { background: var(--accent); }
+.nav-ham {
+  display: none; position: absolute; right: 1.8rem;
+  flex-direction: column; gap: 5px; cursor: pointer;
+}
+.nav-ham span { width: 18px; height: 1px; background: var(--white3); display: block; }
 
-footer{background:var(--abyss);border-top:1px solid var(--line);padding:3.5rem 2.5rem 1.5rem}
-.footer-inner{max-width:1160px;margin:0 auto}
-.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:2rem;padding-bottom:2.5rem;border-bottom:1px solid var(--line)}
-.footer-brand-logo{display:flex;align-items:center;gap:.5rem;margin-bottom:.9rem}
-.footer-brand-logo img{width:26px;height:26px;object-fit:contain;filter:brightness(0) invert(1)}
-.footer-brand-logo span{font-family:var(--fd);font-size:.9rem;font-weight:800;color:var(--frost);letter-spacing:.04em}
-.footer-brand-logo .dot{color:var(--cyan)}
-.footer-brand p{font-size:.76rem;font-style:italic;color:var(--mist);line-height:1.75}
-.footer-col h4{font-family:var(--fb);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pink);margin-bottom:.9rem}
-.footer-col ul{list-style:none}
-.footer-col ul li{margin-bottom:.4rem}
-.footer-col ul li a{font-size:.78rem;font-style:italic;color:var(--mist);transition:color .18s}
-.footer-col ul li a:hover{color:var(--pink)}
-.footer-btm{display:flex;justify-content:space-between;align-items:center;padding-top:1.4rem;flex-wrap:wrap;gap:.5rem}
-.footer-btm p{font-size:.7rem;font-style:italic;color:rgba(255,255,255,.22)}
+/* ─── HERO — SPLIT WORD (Sakazuki "SAKA / ZUKI") ─ */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 0 4rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+/* Background: deep gradient suggesting depth */
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 30%, rgba(212,168,71,.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 80% 70%, rgba(242,237,230,.02) 0%, transparent 50%);
+  pointer-events: none;
+}
+/* Grid of faint lines */
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(242,237,230,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242,237,230,.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+.hero-top-tag {
+  position: absolute; top: 90px; left: 3rem;
+  display: flex; align-items: center; gap: 1rem;
+  font-family: var(--fb); font-size: .58rem; font-weight: 300;
+  letter-spacing: .24em; text-transform: uppercase; color: var(--white3);
+}
+.hero-top-tag::before { content: ''; width: 24px; height: 1px; background: var(--white3); }
+/* The massive split word — Sakazuki's signature move */
+.hero-split {
+  padding: 0 2.5rem;
+  position: relative; z-index: 2;
+}
+.hero-word-top {
+  font-family: var(--fs);
+  font-size: clamp(6rem, 18vw, 18rem);
+  font-weight: 300; line-height: .88;
+  letter-spacing: -.03em; color: var(--white);
+  display: block; overflow: hidden;
+}
+.hero-word-top span { display: block; transform: translateY(100%); transition: transform 1.1s cubic-bezier(.25,.46,.45,.94); }
+.hero-word-top span.show { transform: translateY(0); }
+.hero-word-bot {
+  font-family: var(--fs);
+  font-size: clamp(6rem, 18vw, 18rem);
+  font-weight: 300; line-height: .88;
+  letter-spacing: -.03em; color: transparent;
+  -webkit-text-stroke: 1px rgba(242,237,230,.3);
+  display: block; overflow: hidden;
+  padding-left: clamp(2rem, 10vw, 12rem);
+}
+.hero-word-bot span { display: block; transform: translateY(100%); transition: transform 1.1s cubic-bezier(.25,.46,.45,.94) .12s; }
+.hero-word-bot span.show { transform: translateY(0); }
+/* Hero meta strip */
+.hero-meta {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 2.5rem 3rem 0;
+  position: relative; z-index: 2;
+}
+.hero-meta-l {
+  font-family: var(--fb); font-size: .7rem; font-weight: 300;
+  letter-spacing: .06em; color: var(--white3); line-height: 1.8;
+  max-width: 260px;
+}
+.hero-meta-r {
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.hero-scroll-hint {
+  font-family: var(--fb); font-size: .56rem; font-weight: 300;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--white3);
+  display: flex; align-items: center; gap: .6rem;
+}
+.hero-scroll-hint::after {
+  content: ''; width: 1px; height: 40px;
+  background: rgba(242,237,230,.2);
+  animation: lineGrow 2s ease-in-out infinite;
+}
+@keyframes lineGrow {
+  0%, 100% { height: 24px; opacity: .4; }
+  50% { height: 48px; opacity: .8; }
+}
 
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
+/* ─── INTRO STRIP ─────────────────────────────── */
+.intro-strip {
+  display: flex; align-items: stretch;
+  border-bottom: 1px solid var(--line);
+}
+.intro-strip-text {
+  flex: 1; padding: 4rem 3rem;
+  border-right: 1px solid var(--line);
+}
+.intro-strip-text p {
+  font-family: var(--fs); font-size: 1.55rem; font-style: italic;
+  font-weight: 300; color: var(--white2); line-height: 1.5;
+  max-width: 520px;
+}
+.intro-strip-count {
+  width: 240px; padding: 4rem 3rem;
+  display: flex; flex-direction: column; justify-content: center;
+  gap: .5rem;
+}
+.intro-strip-count .big-n {
+  font-family: var(--fs); font-size: 5rem; font-weight: 300;
+  color: var(--white); line-height: 1; letter-spacing: -.04em;
+}
+.intro-strip-count p {
+  font-family: var(--fb); font-size: .6rem; font-weight: 300;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--white3);
+}
 
-@media(max-width:640px){
-  nav{padding:0 1.2rem}.nav-links{display:none}
-  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:58px;left:0;right:0;background:rgba(8,12,20,.98);border-bottom:1px solid var(--line);padding:1rem 1.5rem 1.5rem;gap:.3rem;z-index:199}
-  .nav-ham{display:flex}
-  .page-hero{padding:3.5rem 1.2rem}.play-sec{padding:3rem 1.2rem 4rem}
-  .crumb{padding:.6rem 1.2rem}.footer-grid{grid-template-columns:1fr}
+/* ─── GAMES — EDITORIAL LAYOUT ────────────────── */
+/* Each game is a full-bleed panel — inspired by Sakazuki's benefits panels */
+.game-panel {
+  display: grid; min-height: 560px;
+  border-bottom: 1px solid var(--line);
+  position: relative; overflow: hidden;
+}
+.game-panel.layout-left  { grid-template-columns: 1fr 1.2fr; }
+.game-panel.layout-right { grid-template-columns: 1.2fr 1fr; }
+
+/* Visual side — full-bleed color block with huge emoji */
+.game-visual {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 400px;
+}
+.game-panel.layout-right .game-visual { order: 2; }
+.game-panel.layout-right .game-info  { order: 1; }
+.game-visual-bg {
+  position: absolute; inset: 0;
+  transition: transform .8s ease;
+}
+.game-panel:hover .game-visual-bg { transform: scale(1.04); }
+.game-emoji {
+  font-size: 9rem; position: relative; z-index: 1;
+  filter: drop-shadow(0 0 60px rgba(0,0,0,.6));
+  transition: transform .4s ease;
+}
+.game-panel:hover .game-emoji { transform: scale(1.08) rotate(-4deg); }
+.game-visual-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,.1) 100%);
+  z-index: 0;
+}
+
+/* Info side */
+.game-info {
+  padding: 4rem 3.5rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-left: 1px solid var(--line);
+  position: relative;
+}
+.game-panel.layout-right .game-info { border-left: none; border-right: 1px solid var(--line); }
+.game-num {
+  font-family: var(--fb); font-size: .58rem; font-weight: 300;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--white3);
+  margin-bottom: 3rem;
+}
+.game-genre {
+  font-family: var(--fb); font-size: .62rem; font-weight: 300;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: .7rem;
+}
+/* Sakazuki's ( people ) parenthetical tag */
+.game-genre::before { content: '( '; }
+.game-genre::after  { content: ' )'; }
+.game-name {
+  font-family: var(--fs); font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+  font-weight: 300; color: var(--white);
+  line-height: 1; letter-spacing: -.02em; margin-bottom: 1.5rem;
+}
+.game-desc {
+  font-family: var(--fb); font-size: .82rem; font-weight: 300;
+  color: var(--white3); line-height: 1.85; max-width: 340px;
+  margin-bottom: 3rem;
+}
+.game-cta {
+  display: flex; align-items: center; gap: 1.2rem;
+  padding-top: 1.5rem; border-top: 1px solid var(--line);
+  width: fit-content;
+}
+.game-cta a {
+  font-family: var(--fb); font-size: .62rem; font-weight: 400;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--white2); display: flex; align-items: center; gap: .5rem;
+  transition: color .2s;
+}
+.game-cta a:hover { color: var(--white); }
+.game-cta-arrow {
+  width: 32px; height: 32px; border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; color: var(--white3);
+  transition: background .2s, color .2s, border-color .2s;
+}
+.game-cta a:hover .game-cta-arrow {
+  background: var(--white); color: var(--black); border-color: var(--white);
+}
+
+/* Visual backgrounds per game */
+.bg-ufo     { background: linear-gradient(135deg, #080820, #0A1A3A, #0D2A5A); }
+.bg-kaleido { background: linear-gradient(135deg, #1A0825, #3D0D5C, #600A80); }
+.bg-crash   { background: linear-gradient(135deg, #0D1A08, #1A3D0D, #2A5C14); }
+.bg-card    { background: linear-gradient(135deg, #1A0808, #3D1208, #6B1F0A); }
+.bg-ttt     { background: linear-gradient(135deg, #1A1208, #3D2D08, #6B4E0A); }
+
+/* ─── CLOSER / CTA SECTION ────────────────────── */
+.closer {
+  padding: 8rem 3rem;
+  border-bottom: 1px solid var(--line);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+}
+.closer h2 {
+  font-family: var(--fs); font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: 300; letter-spacing: -.02em; color: var(--white);
+  line-height: .95;
+}
+.closer h2 em { font-style: italic; color: var(--accent); }
+.closer-right {
+  display: flex; flex-direction: column; gap: 2rem;
+  padding-left: 2rem; border-left: 1px solid var(--line);
+}
+.closer-right p {
+  font-family: var(--fb); font-size: .82rem; font-weight: 300;
+  color: var(--white3); line-height: 1.85;
+}
+.btn-w {
+  font-family: var(--fb); font-size: .65rem; font-weight: 400;
+  letter-spacing: .18em; text-transform: uppercase;
+  background: var(--white); color: var(--black);
+  padding: .8rem 2rem; display: inline-block; width: fit-content;
+  transition: background .2s;
+}
+.btn-w:hover { background: var(--accent); }
+.btn-ghost-sm {
+  font-family: var(--fb); font-size: .65rem; font-weight: 400;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--white3); border: 1px solid var(--line);
+  padding: .8rem 2rem; display: inline-block; width: fit-content;
+  transition: color .2s, border-color .2s;
+}
+.btn-ghost-sm:hover { color: var(--white); border-color: rgba(242,237,230,.3); }
+
+/* ─── TICKER ───────────────────────────────────── */
+.ticker {
+  overflow: hidden; border-bottom: 1px solid var(--line);
+  padding: .75rem 0; background: var(--black2);
+}
+.ticker-inner {
+  display: flex; animation: tickroll 32s linear infinite; white-space: nowrap;
+}
+.ticker-inner:hover { animation-play-state: paused; }
+.t-item {
+  font-family: var(--fb); font-size: .6rem; font-weight: 300;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--white3); padding: 0 2.5rem; flex-shrink: 0;
+  display: flex; align-items: center; gap: .8rem;
+}
+.t-item::after { content: '✦'; font-size: .38rem; color: var(--accent); }
+@keyframes tickroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ─── FOOTER ───────────────────────────────────── */
+footer {
+  background: var(--black2);
+  border-top: 1px solid var(--line);
+  padding: 4.5rem 3rem 2rem;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 2.5rem;
+  padding-bottom: 3rem; border-bottom: 1px solid var(--line);
+}
+.f-logo { display: flex; align-items: center; gap: .55rem; margin-bottom: 1rem; }
+.f-logo img { width: 22px; height: 22px; object-fit: contain; filter: brightness(0) invert(1); opacity: .6; }
+.f-logo span {
+  font-family: var(--fs); font-size: .8rem; font-weight: 400;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--white3);
+}
+.f-brand p {
+  font-family: var(--fb); font-size: .72rem; font-weight: 300;
+  color: rgba(242,237,230,.3); line-height: 1.8;
+}
+.f-col h4 {
+  font-family: var(--fb); font-size: .56rem; font-weight: 300;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(242,237,230,.28); margin-bottom: 1.2rem;
+}
+.f-col ul { list-style: none; }
+.f-col ul li { margin-bottom: .5rem; }
+.f-col ul li a {
+  font-family: var(--fb); font-size: .72rem; font-weight: 300;
+  color: var(--white3); transition: color .2s;
+}
+.f-col ul li a:hover { color: var(--white); }
+.footer-btm {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 1.5rem; flex-wrap: wrap; gap: .5rem;
+}
+.footer-btm p {
+  font-family: var(--fb); font-size: .58rem; font-weight: 300;
+  letter-spacing: .1em; color: rgba(242,237,230,.18);
+}
+.footer-soc { display: flex; gap: 1.5rem; }
+.footer-soc a {
+  font-family: var(--fb); font-size: .56rem; font-weight: 300;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(242,237,230,.28); transition: color .2s;
+}
+.footer-soc a:hover { color: var(--white2); }
+
+/* ─── REVEAL ───────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(.25,.46,.45,.94),
+              transform 1s cubic-bezier(.25,.46,.45,.94);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: .1s; }
+.d2 { transition-delay: .22s; }
+.d3 { transition-delay: .36s; }
+
+/* ─── RESPONSIVE ───────────────────────────────── */
+@media (max-width: 1000px) {
+  .game-panel.layout-left,
+  .game-panel.layout-right { grid-template-columns: 1fr; }
+  .game-panel.layout-right .game-visual { order: 1; }
+  .game-panel.layout-right .game-info  { order: 2; }
+  .game-panel.layout-right .game-info  { border-right: none; border-left: none; }
+  .game-visual { min-height: 300px; }
+  .game-info { border-left: none; }
+  .closer { grid-template-columns: 1fr; }
+  .closer-right { border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 2rem; }
+  .intro-strip { flex-direction: column; }
+  .intro-strip-count { width: 100%; border-top: 1px solid var(--line); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 660px) {
+  nav { padding: 0 1.5rem; }
+  .nav-left, .nav-right { display: none; }
+  .nav-ham { display: flex; }
+  .side-label { display: none; }
+  .hero-split { padding: 0 1.5rem; }
+  .hero-top-tag { left: 1.5rem; }
+  .hero-meta { padding: 2rem 1.5rem 0; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .intro-strip-text, .intro-strip-count, .game-info { padding: 2.5rem 1.5rem; }
+  .closer { padding: 5rem 1.5rem; }
+  .footer-grid { grid-template-columns: 1fr; }
+  footer { padding: 3rem 1.5rem 1.5rem; }
+  .ticker { display: none; }
 }
 </style>
 </head>
 <body>
 
+<!-- Cursor -->
+<div class="cur" id="cur"></div>
+
+<!-- Side label -->
+<div class="side-label">Play · Explore · Discover</div>
+
+<!-- Mobile menu -->
+<div class="mob-menu" id="mobMenu">
+  <div class="mob-menu-close" onclick="closeMob()">Close ✕</div>
+  <a href="index.html" onclick="closeMob()">Home</a>
+  <a href="index.html#apps" onclick="closeMob()">Apps</a>
+  <a href="tools.html" onclick="closeMob()">Tools</a>
+  <a href="playground.html" onclick="closeMob()">Playground</a>
+  <a href="index.html#contact" onclick="closeMob()">Contact</a>
+</div>
+
+<!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">
-    <img src="https://arundeep-assam.github.io/playground/uploads/ArunDeepLogo.png" alt="ArunDeep"/>
-    <span>ArunDeep<span class="dot">.</span></span>
-  </a>
-  <ul class="nav-links" id="navLinks">
+  <ul class="nav-left">
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#apps">Apps</a></li>
     <li><a href="tools.html">Tools</a></li>
+  </ul>
+  <a href="index.html" class="nav-center">
+    <img src="https://arundeep-assam.github.io/playground/uploads/ArunDeepLogo.png" alt="ArunDeep"/>
+    <span>ArunDeep</span>
+  </a>
+  <ul class="nav-right">
     <li><a href="playground.html" class="active">Playground</a></li>
     <li><a href="index.html#contact">Contact</a></li>
-    <li><a href="https://play.google.com/store/apps/dev?id=8575568315140922409" target="_blank" class="nav-cta">Play Store ↗</a></li>
+    <li><a href="https://play.google.com/store/apps/dev?id=8575568315140922409" target="_blank" class="nav-cta-pill">Play Store</a></li>
   </ul>
-  <div class="nav-ham" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></div>
+  <div class="nav-ham" onclick="document.getElementById('mobMenu').classList.add('open')">
+    <span></span><span></span>
+  </div>
 </nav>
 
-<div class="page-hero">
-  <div class="page-hero-inner">
-    <div class="eyebrow">Play Now</div>
-    <h1>Playground</h1>
-    <p>Fun browser-based mini-games and interactive experiences — no downloads, no sign-up. Just play.</p>
+<!-- HERO — SPLIT WORD LIKE SAKAZUKI -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-top-tag">Browser games · No download</div>
+
+  <div class="hero-split">
+    <span class="hero-word-top" aria-hidden="true"><span id="w1">PLAY</span></span>
+    <span class="hero-word-bot" aria-hidden="true"><span id="w2">GROUND</span></span>
+  </div>
+
+  <div class="hero-meta reveal">
+    <div class="hero-meta-l">
+      Five interactive experiences crafted by ArunDeep Apps. Play directly in your browser — no sign-up, no download, no friction.
+    </div>
+    <div class="hero-meta-r">
+      <div class="hero-scroll-hint">Scroll</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="t-item">Fly the UFO</span>
+    <span class="t-item">Kaleidoscope</span>
+    <span class="t-item">Don't Crash</span>
+    <span class="t-item">Pick a Card</span>
+    <span class="t-item">Tic Tac Toe</span>
+    <span class="t-item">Play Free</span>
+    <span class="t-item">No Download</span>
+    <span class="t-item">Fly the UFO</span>
+    <span class="t-item">Kaleidoscope</span>
+    <span class="t-item">Don't Crash</span>
+    <span class="t-item">Pick a Card</span>
+    <span class="t-item">Tic Tac Toe</span>
+    <span class="t-item">Play Free</span>
+    <span class="t-item">No Download</span>
   </div>
 </div>
 
-<div class="crumb"><div class="crumb-in"><a href="index.html">Home</a><span>›</span><span>Playground</span></div></div>
+<!-- INTRO STRIP -->
+<div class="intro-strip">
+  <div class="intro-strip-text reveal">
+    <p>Games should be effortless — open a link, start playing, close the tab. No accounts. No installs. Just play.</p>
+  </div>
+  <div class="intro-strip-count reveal d1">
+    <div class="big-n">05</div>
+    <p>Games Available</p>
+  </div>
+</div>
 
-<div class="play-sec">
-  <div class="inner">
-    <div class="play-grid">
-      <div class="play-card reveal">
-        <div class="play-emoji">🛸</div>
-        <div class="play-badge">Action</div>
-        <h3>Fly the UFO</h3>
-        <p>Pilot your UFO through obstacles and see how far you can go. Addictive, quick to pick up.</p>
-        <a href="https://arundeep-assam.github.io/playground/fly_the_ufo.html" target="_blank" class="play-link">Play Now →</a>
-      </div>
-      <div class="play-card reveal">
-        <div class="play-emoji">🌈</div>
-        <div class="play-badge">Visual</div>
-        <h3>Kaleidoscope</h3>
-        <p>An interactive, meditative kaleidoscope — move your cursor and watch the patterns bloom.</p>
-        <a href="https://arundeep-assam.github.io/playground/Kaleidoscope.html" target="_blank" class="play-link">Play Now →</a>
-      </div>
-      <div class="play-card reveal">
-        <div class="play-emoji">🚗</div>
-        <div class="play-badge">Arcade</div>
-        <h3>Don't Crash</h3>
-        <p>Navigate through traffic without crashing. How long can you survive on the road?</p>
-        <a href="https://arundeep-assam.github.io/playground/dont_crash.html" target="_blank" class="play-link">Play Now →</a>
-      </div>
-      <div class="play-card reveal">
-        <div class="play-emoji">🃏</div>
-        <div class="play-badge">Card Game</div>
-        <h3>Pick a Card</h3>
-        <p>Draw your card and see what fate has in store. An interactive card experience.</p>
-        <a href="https://arundeep-assam.github.io/playground/pick_a_card.html" target="_blank" class="play-link">Play Now →</a>
-      </div>
-      <div class="play-card reveal">
-        <div class="play-emoji">⭕</div>
-        <div class="play-badge">Classic</div>
-        <h3>Tic Tac Toe</h3>
-        <p>The timeless classic — play against a friend or challenge yourself against the AI.</p>
-        <a href="https://arundeep-assam.github.io/playground/tic_tac_toe.html" target="_blank" class="play-link">Play Now →</a>
-      </div>
+<!-- ── GAME 01 — FLY THE UFO ── -->
+<article class="game-panel layout-left reveal">
+  <div class="game-visual">
+    <div class="game-visual-bg bg-ufo"></div>
+    <div class="game-visual-overlay"></div>
+    <div class="game-emoji">🛸</div>
+  </div>
+  <div class="game-info">
+    <div class="game-num">01 — Game</div>
+    <div>
+      <div class="game-genre">Action</div>
+      <h2 class="game-name">Fly the<br>UFO</h2>
+      <p class="game-desc">Pilot your UFO through an ever-changing field of obstacles and see how far you can go. Smooth controls, rising difficulty, deeply addictive from the first second.</p>
+    </div>
+    <div class="game-cta">
+      <a href="https://arundeep-assam.github.io/playground/fly_the_ufo.html" target="_blank">
+        Play Now
+        <span class="game-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<!-- ── GAME 02 — KALEIDOSCOPE ── -->
+<article class="game-panel layout-right reveal">
+  <div class="game-visual">
+    <div class="game-visual-bg bg-kaleido"></div>
+    <div class="game-visual-overlay"></div>
+    <div class="game-emoji">🌈</div>
+  </div>
+  <div class="game-info">
+    <div class="game-num">02 — Experience</div>
+    <div>
+      <div class="game-genre">Visual · Meditative</div>
+      <h2 class="game-name">Kaleido<br>scope</h2>
+      <p class="game-desc">Move your cursor and watch geometric patterns bloom and morph in real time. A meditative visual experience — part art, part toy, entirely mesmerizing.</p>
+    </div>
+    <div class="game-cta">
+      <a href="https://arundeep-assam.github.io/playground/Kaleidoscope.html" target="_blank">
+        Open Experience
+        <span class="game-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<!-- ── GAME 03 — DON'T CRASH ── -->
+<article class="game-panel layout-left reveal">
+  <div class="game-visual">
+    <div class="game-visual-bg bg-crash"></div>
+    <div class="game-visual-overlay"></div>
+    <div class="game-emoji">🚗</div>
+  </div>
+  <div class="game-info">
+    <div class="game-num">03 — Game</div>
+    <div>
+      <div class="game-genre">Arcade</div>
+      <h2 class="game-name">Don't<br>Crash</h2>
+      <p class="game-desc">Navigate your car through relentless traffic without hitting anything. Simple concept, ruthless execution. One mistake and it's over — how long can you last?</p>
+    </div>
+    <div class="game-cta">
+      <a href="https://arundeep-assam.github.io/playground/dont_crash.html" target="_blank">
+        Play Now
+        <span class="game-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<!-- ── GAME 04 — PICK A CARD ── -->
+<article class="game-panel layout-right reveal">
+  <div class="game-visual">
+    <div class="game-visual-bg bg-card"></div>
+    <div class="game-visual-overlay"></div>
+    <div class="game-emoji">🃏</div>
+  </div>
+  <div class="game-info">
+    <div class="game-num">04 — Game</div>
+    <div>
+      <div class="game-genre">Card · Fortune</div>
+      <h2 class="game-name">Pick a<br>Card</h2>
+      <p class="game-desc">Draw a card from the deck and let fate reveal something about your day. A playful, interactive card experience that's different every time you visit.</p>
+    </div>
+    <div class="game-cta">
+      <a href="https://arundeep-assam.github.io/playground/pick_a_card.html" target="_blank">
+        Draw a Card
+        <span class="game-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<!-- ── GAME 05 — TIC TAC TOE ── -->
+<article class="game-panel layout-left reveal">
+  <div class="game-visual">
+    <div class="game-visual-bg bg-ttt"></div>
+    <div class="game-visual-overlay"></div>
+    <div class="game-emoji">⭕</div>
+  </div>
+  <div class="game-info">
+    <div class="game-num">05 — Classic</div>
+    <div>
+      <div class="game-genre">Strategy · Two Player</div>
+      <h2 class="game-name">Tic Tac<br>Toe</h2>
+      <p class="game-desc">The timeless game, refreshed for the browser. Challenge a friend sitting next to you or take on the computer AI. Deceptively simple, endlessly replayable.</p>
+    </div>
+    <div class="game-cta">
+      <a href="https://arundeep-assam.github.io/playground/tic_tac_toe.html" target="_blank">
+        Play Now
+        <span class="game-cta-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<!-- CLOSER / MORE -->
+<div class="closer">
+  <h2 class="reveal">More<br>coming<br><em>soon.</em></h2>
+  <div class="closer-right reveal d1">
+    <p>The Playground is always growing. New games and interactive experiences are built and added regularly — all free, all in your browser.</p>
+    <p>If you have an idea for a game or a tool you'd like to see here, reach out.</p>
+    <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+      <a href="index.html#apps" class="btn-w">See All Apps</a>
+      <a href="tools.html" class="btn-ghost-sm">Open Tools</a>
     </div>
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-brand-logo">
-          <img src="https://arundeep-assam.github.io/playground/uploads/ArunDeepLogo.png" alt="ArunDeep"/>
-          <span>ArunDeep<span class="dot">.</span></span>
-        </div>
-        <p>Independent Android developer from Guwahati, Assam — building culturally meaningful mobile experiences.</p>
+  <div class="footer-grid">
+    <div class="f-brand">
+      <div class="f-logo">
+        <img src="https://arundeep-assam.github.io/playground/uploads/ArunDeepLogo.png" alt="ArunDeep"/>
+        <span>ArunDeep</span>
       </div>
-      <div class="footer-col"><h4>Pages</h4><ul><li><a href="index.html">Home</a></li><li><a href="index.html#apps">Apps</a></li><li><a href="tools.html">Tools</a></li><li><a href="playground.html">Playground</a></li></ul></div>
-      <div class="footer-col"><h4>Games</h4><ul>
+      <p>Independent Android developer from Guwahati, Assam — building culturally meaningful mobile experiences and free browser games.</p>
+    </div>
+    <div class="f-col">
+      <h4>Pages</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#apps">Apps</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="playground.html">Playground</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Games</h4>
+      <ul>
         <li><a href="https://arundeep-assam.github.io/playground/fly_the_ufo.html" target="_blank">Fly the UFO</a></li>
         <li><a href="https://arundeep-assam.github.io/playground/Kaleidoscope.html" target="_blank">Kaleidoscope</a></li>
         <li><a href="https://arundeep-assam.github.io/playground/dont_crash.html" target="_blank">Don't Crash</a></li>
         <li><a href="https://arundeep-assam.github.io/playground/pick_a_card.html" target="_blank">Pick a Card</a></li>
         <li><a href="https://arundeep-assam.github.io/playground/tic_tac_toe.html" target="_blank">Tic Tac Toe</a></li>
-      </ul></div>
-      <div class="footer-col"><h4>Connect</h4><ul>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Connect</h4>
+      <ul>
         <li><a href="mailto:arundeep.apps@gmail.com">Email</a></li>
         <li><a href="https://www.facebook.com/agidevs.apps" target="_blank">Facebook</a></li>
         <li><a href="https://play.google.com/store/apps/dev?id=8575568315140922409" target="_blank">Google Play</a></li>
-      </ul></div>
+      </ul>
     </div>
-    <div class="footer-btm"><p>// © 2024 ArunDeep Apps · Guwahati, Assam</p></div>
+  </div>
+  <div class="footer-btm">
+    <p>© 2024 ArunDeep Apps — Guwahati, Assam — Made with care for Assam</p>
+    <div class="footer-soc">
+      <a href="https://www.facebook.com/agidevs.apps" target="_blank">Facebook</a>
+      <a href="https://play.google.com/store/apps/dev?id=8575568315140922409" target="_blank">Play Store</a>
+      <a href="mailto:arundeep.apps@gmail.com">Email</a>
+    </div>
   </div>
 </footer>
 
 <script>
-const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+
+/* ── HERO WORD REVEAL ── */
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.getElementById('w1').classList.add('show');
+    document.getElementById('w2').classList.add('show');
+  }, 120);
+});
+
+/* ── SCROLL REVEALS ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── MOBILE MENU ── */
+function closeMob() {
+  document.getElementById('mobMenu').classList.remove('open');
+}
+
+/* ── NAV BORDER ── */
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.borderBottomColor =
+    window.scrollY > 60 ? 'rgba(242,237,230,.06)' : 'rgba(242,237,230,.09)';
+});
 </script>
 </body>
 </html>
