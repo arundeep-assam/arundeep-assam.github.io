@@ -891,6 +891,110 @@ footer {
   .cal-day .a-num { font-size: .85rem; }
   .cal-fab { bottom: 1.2rem; right: 1.2rem; }
 }
+
+/* ─── DROPDOWN SELECTOR BAR ──────────────────────── */
+.cal-selectors {
+  display: flex;
+  gap: .5rem;
+  padding: .7rem 1.8rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8,8,8,.6);
+  align-items: center;
+}
+/* Custom select wrapper */
+.cal-sel-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.cal-sel-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: .6rem;
+  font-size: .55rem;
+  color: var(--accent);
+  pointer-events: none;
+}
+.cal-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--black2);
+  border: 1px solid rgba(212,168,71,.22);
+  color: var(--white);
+  font-family: var(--fs);
+  font-size: .95rem;
+  font-weight: 300;
+  padding: .38rem 1.8rem .38rem .75rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .2s;
+  min-width: 0;
+}
+.cal-select:hover,
+.cal-select:focus { border-color: var(--accent); }
+/* Month select wider for Assamese text */
+.cal-select.sel-month { min-width: 130px; }
+.cal-select.sel-year  { min-width: 88px; }
+/* Style native option elements */
+.cal-select option {
+  background: #1a1a1a;
+  color: var(--white);
+  font-family: var(--fb);
+  font-size: .85rem;
+}
+.cal-sel-label {
+  font-family: var(--fb);
+  font-size: .58rem;
+  font-weight: 300;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(242,237,230,.28);
+  margin-right: .2rem;
+  white-space: nowrap;
+}
+/* Spacer between the two selects */
+.cal-sel-sep {
+  font-family: var(--fb);
+  font-size: .6rem;
+  color: rgba(212,168,71,.3);
+  padding: 0 .15rem;
+}
+
+/* ─── TODAY CELL STRONGER HIGHLIGHT ─────────────── */
+.cal-day.today {
+  background: rgba(212,168,71,.12) !important;
+}
+.cal-day.today .g-num { color: var(--accent); }
+.cal-day.today .a-num {
+  color: var(--accent);
+  font-weight: 600;
+}
+/* Circular badge behind today's Assamese number */
+.cal-day.today .a-num-wrap {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--black);
+  font-family: var(--fs);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+/* Selected date */
+.cal-day.selected:not(.today) {
+  background: rgba(242,237,230,.06);
+}
+.cal-day.selected:not(.today) .a-num {
+  color: var(--white);
+}
+.cal-day.selected:not(.today)::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: rgba(242,237,230,.4);
+}
 </style>
 </head>
 <body>
@@ -1305,10 +1409,22 @@ footer {
         <span class="cal-asm-year" id="calAsmYear"></span>
       </div>
       <div class="cal-nav">
-        <button class="cal-nav-btn" id="calPrev" aria-label="Previous month">‹</button>
+        <button class="cal-nav-btn" id="calPrev" aria-label="Previous month">&#8249;</button>
         <button class="cal-nav-btn" id="calToday" title="Go to today" style="font-size:.55rem;letter-spacing:.08em;padding:0 .5rem;width:auto;">আজি</button>
-        <button class="cal-nav-btn" id="calNext" aria-label="Next month">›</button>
-        <button class="cal-close" id="calClose" aria-label="Close calendar">✕</button>
+        <button class="cal-nav-btn" id="calNext" aria-label="Next month">&#8250;</button>
+        <button class="cal-close" id="calClose" aria-label="Close calendar">&#x2715;</button>
+      </div>
+    </div>
+
+    <!-- Dropdown selectors -->
+    <div class="cal-selectors">
+      <span class="cal-sel-label">Jump to</span>
+      <div class="cal-sel-wrap">
+        <select class="cal-select sel-month" id="calSelMonth" aria-label="Select month"></select>
+      </div>
+      <span class="cal-sel-sep">&#183;</span>
+      <div class="cal-sel-wrap">
+        <select class="cal-select sel-year" id="calSelYear" aria-label="Select year"></select>
       </div>
     </div>
 
@@ -1342,7 +1458,11 @@ footer {
 </div>
 
 <script>
-/* ── CURSOR ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   SITE UTILITIES
+═══════════════════════════════════════════════════════ */
+
+/* ── CURSOR ── */
 const cur = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
   cur.style.left = e.clientX + 'px';
@@ -1369,269 +1489,301 @@ window.addEventListener('scroll', () => {
     window.scrollY > 60 ? 'rgba(242,237,230,.07)' : 'rgba(242,237,230,.1)';
 });
 
-/* ══════════════════════════════════════════════════
-   ASSAMESE CALENDAR ENGINE
-   Assamese calendar = Bikram Sambat (BS)
-   BS year ≈ Gregorian year + 56 (before mid-April) or +57 (after)
-   New year (Bohag/Baisakh) starts ~April 14-15
-══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   ASSAMESE CALENDAR ENGINE — FIXED
+   -------------------------------------------------------
+   State is stored as { curAsmMonth (0-11), curBsYear }
+   and NEVER converted back to Gregorian for navigation.
+   asmToGreg() maps directly: no round-trip drift.
+═══════════════════════════════════════════════════════ */
 
-/* Assamese month names (Xaka/Assamese lunisolar — starts mid-April) */
+/* ── CONSTANTS ── */
 const ASM_MONTHS = [
-  'বহাগ',    /* 01 — Bohag    (mid-Apr – mid-May)  */
-  'জেঠ',     /* 02 — Jeth     (mid-May – mid-Jun)  */
-  'আহাৰ',    /* 03 — Ahar     (mid-Jun – mid-Jul)  */
-  'শাওণ',    /* 04 — Xaon     (mid-Jul – mid-Aug)  */
-  'ভাদ',     /* 05 — Bhad     (mid-Aug – mid-Sep)  */
-  'আহিন',    /* 06 — Ahin     (mid-Sep – mid-Oct)  */
-  'কাতি',    /* 07 — Kati     (mid-Oct – mid-Nov)  */
-  'আঘোণ',   /* 08 — Aghon    (mid-Nov – mid-Dec)  */
-  'পুহ',     /* 09 — Puh      (mid-Dec – mid-Jan)  */
-  'মাঘ',     /* 10 — Magh     (mid-Jan – mid-Feb)  */
-  'ফাগুন',   /* 11 — Phagun   (mid-Feb – mid-Mar)  */
-  "চ'ত",    /* 12 — Chot     (mid-Mar – mid-Apr)  */
+  'বহাগ','জেঠ','আহাৰ','শাওণ','ভাদ','আহিন',
+  'কাতি','আঘোণ','পুহ','মাঘ','ফাগুন',"চ'ত"
 ];
-
 const ASM_MONTH_EN = [
   'Bohag','Jeth','Ahar','Xaon','Bhad','Ahin',
   'Kati','Aghon','Puh','Magh','Phagun','Chot'
 ];
-
-/* Gregorian month names (short) for the header label */
-const GR_MONTHS = [
+const GR_MONTHS_SHORT = [
   'Jan','Feb','Mar','Apr','May','Jun',
   'Jul','Aug','Sep','Oct','Nov','Dec'
 ];
 
-/**
- * Convert a Gregorian date to Assamese (Bikram Sambat solar) date.
+/*
+ * Each Assamese month starts on a fixed Gregorian calendar date
+ * (Sankranti — solar ingress). Mapping:
  *
- * The Assamese solar calendar runs parallel to the Bengali Panjika.
- * Each Assamese month begins when the sun enters a new zodiac sign
- * (Sankranti), which falls between the 13th–16th of the corresponding
- * Gregorian month. We use the canonical mid-month transition dates:
+ *  Assamese month index → [ Gregorian month (0-based), start day ]
  *
- *   Bohag  starts Apr 14/15   (Mesha Sankranti — Bihu)
- *   Jeth   starts May 15/16
- *   Ahar   starts Jun 15/16
- *   Xaon   starts Jul 16/17
- *   Bhad   starts Aug 16/17
- *   Ahin   starts Sep 16/17
- *   Kati   starts Oct 17/18
- *   Aghon  starts Nov 16/17
- *   Puh    starts Dec 15/16
- *   Magh   starts Jan 14/15
- *   Phagun starts Feb 13/14
- *   Chot   starts Mar 14/15
+ *  0  Bohag   → Apr 14   (Rongali Bihu / Assamese New Year)
+ *  1  Jeth    → May 15
+ *  2  Ahar    → Jun 15
+ *  3  Xaon    → Jul 16
+ *  4  Bhad    → Aug 16
+ *  5  Ahin    → Sep 16
+ *  6  Kati    → Oct 17
+ *  7  Aghon   → Nov 16
+ *  8  Puh     → Dec 15
+ *  9  Magh    → Jan 14   (next Gregorian year)
+ * 10  Phagun  → Feb 13
+ * 11  Chot    → Mar 14
  *
- * Returns { asmDay, asmMonth (0-based), asmYear }
+ * Bikram Sambat (BS) year rule:
+ *   Months 0–8  (Bohag–Puh,  Apr–Dec): BS = Gregorian year + 57
+ *   Months 9–11 (Magh–Chot,  Jan–Mar): BS = Gregorian year + 56
+ *   (These Jan–Mar months belong to the END of a BS year that started
+ *    the previous April, so their Gregorian year is bsYear - 56)
  */
-function gregorianToAssamese(date) {
-  const y = date.getFullYear();
-  const m = date.getMonth(); // 0-based
-  const d = date.getDate();
 
-  /* Sankranti start day for each Gregorian month (approximate) */
-  const SANKRANTI = [14,13,14,14,15,15,16,16,16,17,16,15];
-  /* The Assamese month index that STARTS in each Gregorian month */
-  /* Apr→Bohag(0), May→Jeth(1) … Mar→Chot(11) */
-  const GREG_TO_ASM_START = [8,9,10,11,0,1,2,3,4,5,6,7]; // Jan=index0 → Puh starts Jan 14
+const SM = [ /* [gregMonth0based, startDay] for each Assamese month */
+  [3,14],[4,15],[5,15],[6,16],[7,16],[8,16],
+  [9,17],[10,16],[11,15],[0,14],[1,13],[2,14]
+];
 
-  let asmMonth, asmYear, asmDay;
+/* Gregorian digits → Assamese script */
+const AD = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+const toAsm = n => String(n).split('').map(c => AD[+c] ?? c).join('');
 
-  const transDay = SANKRANTI[m];
+/* ── TODAY (Gregorian) ── */
+const TODAY_G = new Date();
+TODAY_G.setHours(0,0,0,0);
 
-  if (d >= transDay) {
-    /* After Sankranti: we are in the month that started this Gregorian month */
-    asmMonth = GREG_TO_ASM_START[m];
-    asmDay   = d - transDay + 1;
-  } else {
-    /* Before Sankranti: we are still in the previous Assamese month */
-    const prevM = (m - 1 + 12) % 12;
-    asmMonth = GREG_TO_ASM_START[prevM];
-    /* Days elapsed since previous Sankranti */
-    const prevTransDay = SANKRANTI[prevM];
-    /* Days in previous Gregorian month */
-    const daysInPrevGregMonth = new Date(y, m, 0).getDate();
-    asmDay = (daysInPrevGregMonth - prevTransDay + 1) + d;
+/* ── Convert a Gregorian Date → Assamese { bsYear, asmMonth, asmDay } ── */
+function gregToAsm(date) {
+  const gy = date.getFullYear();
+  const gm = date.getMonth();   /* 0-based */
+  const gd = date.getDate();
+
+  /* Find which Assamese month we're in:
+     Walk through all 12, find the one whose Gregorian start
+     is on or before `date`, picking the latest match. */
+  let asmM = -1, asmD = -1;
+  for (let i = 0; i < 12; i++) {
+    const [sm, sd] = SM[i];
+    /* Construct the Gregorian start of this Assamese month for this year */
+    /* Months 9-11 (Magh/Phagun/Chot) start in Jan-Mar of the NEXT greg year
+       if we're looking at the BS year that started last April.
+       But simpler: just check if (gm, gd) >= (sm, sd), accounting for
+       the fact that months 9-11 wrap into the next calendar year. */
+    const monthStartInSameYear = sm <= gm || (sm === gm && sd <= gd);
+    /* For months 9-11 the greg month is 0,1,2 (Jan-Mar).
+       They apply when gm ∈ {0,1,2} and gd >= sd (same greg year). */
+    let applies = false;
+    if (i <= 8) {
+      /* Bohag through Puh: start in Apr-Dec of the current greg year */
+      applies = (gm > sm) || (gm === sm && gd >= sd);
+    } else {
+      /* Magh(9)/Phagun(10)/Chot(11): start in Jan/Feb/Mar */
+      applies = (gm > sm) || (gm === sm && gd >= sd);
+      /* Only valid if we're in Jan-Mar of the current greg year */
+      applies = applies && (gm < 4);
+    }
+    if (applies) { asmM = i; }
   }
 
-  /* Bikram Sambat year:
-     Before Bohag (asmMonth < 0 i.e. Chot etc.): BS = Gregorian + 56
-     From Bohag onward: BS = Gregorian + 57           (Bihu = new BS year) */
-  if (asmMonth === 0 /* Bohag */ && d >= SANKRANTI[m]) {
-    asmYear = y + 57; /* New BS year just started */
-  } else if (asmMonth < 9) {
-    /* Bohag(0)–Ahin(5)–Kati(6)–Aghon(7)–Puh(8) after Apr: BS = y+57 */
-    asmYear = y + 57;
+  /* asmM is now the latest matching Assamese month.
+     If nothing matched (shouldn't happen), default to Chot. */
+  if (asmM === -1) asmM = 11;
+
+  /* Calculate asmDay */
+  const [sm, sd] = SM[asmM];
+  let startGregDate;
+  if (asmM <= 8) {
+    /* Bohag-Puh start in the same Greg year */
+    startGregDate = new Date(gy, sm, sd);
   } else {
-    /* Puh(8 in Jan), Magh(9), Phagun(10), Chot(11): these fall in
-       Jan-Apr of next calendar year, BS = that year + 56 */
-    asmYear = y + 56;
+    /* Magh/Phagun/Chot start in Jan-Mar of THIS greg year
+       (the month's greg year matches the date's greg year) */
+    startGregDate = new Date(gy, sm, sd);
+  }
+  const diffMs = date.getTime() - startGregDate.getTime();
+  asmD = Math.floor(diffMs / 86400000) + 1;
+
+  /* BS year */
+  let bsYear;
+  if (asmM >= 9) {
+    /* Magh, Phagun, Chot — belong to a BS year that started last April */
+    bsYear = gy + 56;
+  } else {
+    bsYear = gy + 57;
   }
 
-  return { asmDay, asmMonth, asmYear };
+  return { bsYear, asmMonth: asmM, asmDay: asmD };
 }
 
-/**
- * Given an Assamese month (0-based) and year, return the
- * Gregorian date range [startDate, endDate] for that month.
- */
-function asmMonthToGregorianRange(asmMonth, asmYear) {
-  /* Approximate Gregorian month index where this Assamese month starts */
-  /* Bohag(0)→Apr(3), Jeth(1)→May(4), … Chot(11)→Mar(2) */
-  const ASM_TO_GREG = [3,4,5,6,7,8,9,10,11,0,1,2];
-  const gregM = ASM_TO_GREG[asmMonth];
-
-  /* The Gregorian year for this Assamese month's start */
-  let gregY;
+/* ── Get Gregorian start-date of a given Assamese month in a BS year ── */
+function asmMonthStart(asmMonth, bsYear) {
+  const [gm, gd] = SM[asmMonth];
+  let gy;
   if (asmMonth >= 9) {
-    /* Puh(8→Jan), Magh(9→Jan)… these are in next Gregorian year */
-    gregY = asmYear - 56;
+    /* Magh(9)/Phagun(10)/Chot(11): in Jan-Mar, greg year = bsYear - 56 */
+    gy = bsYear - 56;
   } else {
-    gregY = asmYear - 57;
+    /* Bohag(0)–Puh(8): in Apr-Dec, greg year = bsYear - 57 */
+    gy = bsYear - 57;
   }
-
-  const SANKRANTI = [14,13,14,14,15,15,16,16,16,17,16,15];
-  const startDay  = SANKRANTI[gregM];
-  const startDate = new Date(gregY, gregM, startDay);
-
-  /* End date = day before next month's Sankranti */
-  const nextAsmMonth = (asmMonth + 1) % 12;
-  const nextGregM    = ASM_TO_GREG[nextAsmMonth];
-  let   nextGregY    = gregY;
-  if (nextGregM < gregM) nextGregY++; /* wrapped into next Gregorian year */
-  const endDate = new Date(nextGregY, nextGregM, SANKRANTI[nextGregM] - 1);
-
-  return { startDate, endDate };
+  return new Date(gy, gm, gd);
 }
 
-/* ── FESTIVAL DATA ───────────────────────────────
-   Key: "gregMonth(0-based)-gregDay" → festival name
-   (We mark them on the Gregorian day they fall on)
-───────────────────────────────────────────────── */
+/* ── Get Gregorian END-date (inclusive) of an Assamese month ── */
+function asmMonthEnd(asmMonth, bsYear) {
+  /* End = day before next month starts */
+  const nextM = (asmMonth + 1) % 12;
+  /* Next month's BS year: if we're going from Chot→Bohag, increment BS year */
+  const nextBsYear = (asmMonth === 11) ? bsYear + 1 : bsYear;
+  const nextStart  = asmMonthStart(nextM, nextBsYear);
+  return new Date(nextStart.getTime() - 86400000);
+}
+
+/* ── FESTIVAL DATA (keyed by "gm-gd", 0-based month) ── */
 const FESTIVALS = {
-  /* Bihu — the three main festivals */
-  '3-14': 'ৰঙালী বিহু (Bohag Bihu)',   /* Apr 14 */
-  '3-15': 'ৰঙালী বিহু',
-  '9-18': 'কঁগালী বিহু',               /* Oct 18 */
-  '0-15': 'ভোগালী বিহু',               /* Jan 15 */
-  /* Other significant Assamese / Indian festivals (approximate) */
-  '0-26': 'গণতন্ত্ৰ দিৱস',             /* Jan 26 — Republic Day */
-  '7-15': 'স্বাধীনতা দিৱস',            /* Aug 15 — Independence Day */
-  '9-2':  'গান্ধী জয়ন্তী',            /* Oct 2  — Gandhi Jayanti */
-  '11-25':'বড়দিন',                     /* Dec 25 — Christmas */
+  '3-14':'ৰঙালী বিহু', '3-15':'ৰঙালী বিহু',
+  '9-18':'কঁগালী বিহু',
+  '0-15':'ভোগালী বিহু',
+  '0-26':'গণতন্ত্ৰ দিৱস',
+  '7-15':'স্বাধীনতা দিৱস',
+  '9-2':'গান্ধী জয়ন্তী',
+  '11-25':'বড়দিন',
 };
 
-/* Convert Assamese digit */
-const ASM_DIGITS = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
-function toAsmNum(n) {
-  return String(n).split('').map(c => ASM_DIGITS[+c] ?? c).join('');
+/* ── CALENDAR VIEW STATE ── */
+/* Derive initial state from today */
+const _todayAsm = gregToAsm(TODAY_G);
+let curAsmMonth = _todayAsm.asmMonth;
+let curBsYear   = _todayAsm.bsYear;
+
+/* ── POPULATE DROPDOWNS ── */
+function buildDropdowns() {
+  const selM = document.getElementById('calSelMonth');
+  const selY = document.getElementById('calSelYear');
+
+  /* Month options */
+  selM.innerHTML = '';
+  ASM_MONTHS.forEach((name, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = name + ' (' + ASM_MONTH_EN[i] + ')';
+    selM.appendChild(opt);
+  });
+
+  /* Year options: BS 2075 – 2090 (roughly 2018 – 2033 Gregorian) */
+  selY.innerHTML = '';
+  const todayBs = gregToAsm(TODAY_G).bsYear;
+  for (let y = todayBs - 5; y <= todayBs + 10; y++) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = toAsm(y) + ' (' + y + ')';
+    selY.appendChild(opt);
+  }
 }
 
-/* ── CALENDAR STATE ──────────────────────────────── */
-const TODAY = new Date();
-TODAY.setHours(0,0,0,0);
+function syncDropdowns() {
+  document.getElementById('calSelMonth').value = curAsmMonth;
+  document.getElementById('calSelYear').value  = curBsYear;
+}
 
-/* viewDate drives which Assamese month we're showing */
-let viewDate = new Date(TODAY);
-
-/* Convert viewDate to Assamese to get the "current" asm month/year */
-function getViewAsm() { return gregorianToAssamese(viewDate); }
-
-/* ── RENDER ──────────────────────────────────────── */
+/* ── RENDER ── */
 function renderCalendar() {
-  const { asmMonth, asmYear } = getViewAsm();
-  const { startDate, endDate } = asmMonthToGregorianRange(asmMonth, asmYear);
+  const startDate = asmMonthStart(curAsmMonth, curBsYear);
+  const endDate   = asmMonthEnd(curAsmMonth, curBsYear);
 
-  /* Header labels */
-  const sd = startDate, ed = endDate;
+  /* Header */
+  const sm = startDate.getMonth(), em = endDate.getMonth();
+  const sy = startDate.getFullYear(), ey = endDate.getFullYear();
   document.getElementById('calEngLabel').textContent =
-    GR_MONTHS[sd.getMonth()] + ' ' + sd.getDate() + ' – ' +
-    GR_MONTHS[ed.getMonth()] + ' ' + ed.getDate() + ', ' + ed.getFullYear();
-  document.getElementById('calAsmMonth').textContent = ASM_MONTHS[asmMonth];
+    GR_MONTHS_SHORT[sm] + ' ' + startDate.getDate() + ' \u2013 ' +
+    GR_MONTHS_SHORT[em] + ' ' + endDate.getDate() + ', ' + ey;
+  document.getElementById('calAsmMonth').textContent = ASM_MONTHS[curAsmMonth];
   document.getElementById('calAsmYear').textContent =
-    'বিক্ৰম সম্বৎ ' + toAsmNum(asmYear) + '  ·  ' + ASM_MONTH_EN[asmMonth];
+    '\u09AC\u09BF\u0995\u09CD\u09B0\u09AE \u09B8\u09AE\u09CD\u09AC\u09CE ' +
+    toAsm(curBsYear) + '  \u00B7  ' + ASM_MONTH_EN[curAsmMonth];
 
-  /* Build day cells */
-  const grid   = document.getElementById('calGrid');
+  /* Sync dropdowns */
+  syncDropdowns();
+
+  /* Grid */
+  const grid = document.getElementById('calGrid');
   grid.innerHTML = '';
 
-  /* How many blank cells before the first day? */
-  const firstDOW = startDate.getDay(); /* 0=Sun */
-
-  /* Total days in this Assamese month */
-  const msPerDay     = 86400000;
-  const totalDays    = Math.round((endDate - startDate) / msPerDay) + 1;
-  const totalCells   = Math.ceil((firstDOW + totalDays) / 7) * 7;
+  const msDay      = 86400000;
+  const firstDOW   = startDate.getDay();
+  const totalDays  = Math.round((endDate - startDate) / msDay) + 1;
+  const totalCells = Math.ceil((firstDOW + totalDays) / 7) * 7;
   const lastRowStart = totalCells - 7;
 
   for (let i = 0; i < totalCells; i++) {
     const cell = document.createElement('div');
     cell.className = 'cal-day';
+    if (i >= lastRowStart) cell.classList.add('last-row');
 
-    const cellIdx = i - firstDOW; /* day index within Assamese month (0-based) */
-    const isLastRow = i >= lastRowStart;
-    if (isLastRow) cell.classList.add('last-row');
+    const idx = i - firstDOW; /* 0-based day index in this Assamese month */
 
-    if (cellIdx < 0 || cellIdx >= totalDays) {
+    if (idx < 0 || idx >= totalDays) {
       cell.classList.add('empty');
     } else {
-      const gregDate = new Date(startDate.getTime() + cellIdx * msPerDay);
-      const gregDay  = gregDate.getDate();
-      const gregM    = gregDate.getMonth();
-      const asmDay   = cellIdx + 1;
+      const gDate = new Date(startDate.getTime() + idx * msDay);
+      const gd = gDate.getDate();
+      const gm = gDate.getMonth();
+      const aDay = idx + 1;
+      const isToday = gDate.getTime() === TODAY_G.getTime();
 
-      /* Gregorian day number (small, top) */
-      const gNum = document.createElement('span');
-      gNum.className = 'g-num';
-      gNum.textContent = gregDay;
-      cell.appendChild(gNum);
+      /* Gregorian day (small) */
+      const gSpan = document.createElement('span');
+      gSpan.className = 'g-num';
+      gSpan.textContent = gd;
+      cell.appendChild(gSpan);
 
-      /* Assamese day number (large) */
-      const aNum = document.createElement('span');
-      aNum.className = 'a-num';
-      aNum.textContent = toAsmNum(asmDay);
-      cell.appendChild(aNum);
-
-      /* Today highlight */
-      if (gregDate.getTime() === TODAY.getTime()) {
+      /* Assamese day — circle badge for today, plain otherwise */
+      if (isToday) {
         cell.classList.add('today');
+        const badge = document.createElement('span');
+        badge.className = 'a-num-wrap';
+        badge.textContent = toAsm(aDay);
+        cell.appendChild(badge);
+      } else {
+        const aSpan = document.createElement('span');
+        aSpan.className = 'a-num';
+        aSpan.textContent = toAsm(aDay);
+        cell.appendChild(aSpan);
       }
 
-      /* Festival highlight */
-      const festKey = `${gregM}-${gregDay}`;
-      if (FESTIVALS[festKey]) {
+      /* Festival */
+      const fk = gm + '-' + gd;
+      if (FESTIVALS[fk]) {
         cell.classList.add('festival');
-        cell.title = FESTIVALS[festKey];
+        cell.title = FESTIVALS[fk];
         const dot = document.createElement('span');
         dot.className = 'fest-dot';
         cell.appendChild(dot);
       }
     }
-
     grid.appendChild(cell);
   }
 }
 
-/* ── NAVIGATION ──────────────────────────────────── */
-function shiftMonth(delta) {
-  /* Move viewDate forward/backward by ~30 days then snap to correct month */
-  const { asmMonth, asmYear } = getViewAsm();
-  let newAsmMonth = asmMonth + delta;
-  let newAsmYear  = asmYear;
-  if (newAsmMonth > 11) { newAsmMonth = 0;  newAsmYear++; }
-  if (newAsmMonth < 0)  { newAsmMonth = 11; newAsmYear--; }
-
-  /* Set viewDate to the start of that new Assamese month */
-  const { startDate } = asmMonthToGregorianRange(newAsmMonth, newAsmYear);
-  viewDate = new Date(startDate);
+/* ── NAVIGATION ── */
+function goToMonth(asmMonth, bsYear) {
+  curAsmMonth = asmMonth;
+  curBsYear   = bsYear;
   renderCalendar();
 }
 
-/* ── OPEN / CLOSE ────────────────────────────────── */
+function shiftMonth(delta) {
+  let m = curAsmMonth + delta;
+  let y = curBsYear;
+  if (m > 11) { m = 0;  y++; }
+  if (m < 0)  { m = 11; y--; }
+  goToMonth(m, y);
+}
+
+/* ── OPEN / CLOSE ── */
 function openCal() {
-  viewDate = new Date(TODAY);
+  const t = gregToAsm(TODAY_G);
+  curAsmMonth = t.asmMonth;
+  curBsYear   = t.bsYear;
+  buildDropdowns();
   renderCalendar();
   document.getElementById('calOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1641,28 +1793,29 @@ function closeCal() {
   document.body.style.overflow = '';
 }
 
-/* ── EVENT BINDINGS ──────────────────────────────── */
+/* ── BINDINGS ── */
 document.getElementById('calFab').addEventListener('click', openCal);
 document.getElementById('calClose').addEventListener('click', closeCal);
 document.getElementById('calPrev').addEventListener('click', () => shiftMonth(-1));
 document.getElementById('calNext').addEventListener('click', () => shiftMonth(+1));
 document.getElementById('calToday').addEventListener('click', () => {
-  viewDate = new Date(TODAY);
-  renderCalendar();
+  const t = gregToAsm(TODAY_G);
+  goToMonth(t.asmMonth, t.bsYear);
 });
-
-/* Click outside modal to close */
+document.getElementById('calSelMonth').addEventListener('change', function() {
+  goToMonth(parseInt(this.value), curBsYear);
+});
+document.getElementById('calSelYear').addEventListener('change', function() {
+  goToMonth(curAsmMonth, parseInt(this.value));
+});
 document.getElementById('calOverlay').addEventListener('click', e => {
   if (e.target === document.getElementById('calOverlay')) closeCal();
 });
-
-/* Keyboard: Escape to close, arrow keys to navigate */
 document.addEventListener('keydown', e => {
-  const overlay = document.getElementById('calOverlay');
-  if (!overlay.classList.contains('open')) return;
-  if (e.key === 'Escape')      closeCal();
-  if (e.key === 'ArrowLeft')   shiftMonth(-1);
-  if (e.key === 'ArrowRight')  shiftMonth(+1);
+  if (!document.getElementById('calOverlay').classList.contains('open')) return;
+  if (e.key === 'Escape')     closeCal();
+  if (e.key === 'ArrowLeft')  shiftMonth(-1);
+  if (e.key === 'ArrowRight') shiftMonth(+1);
 });
 </script>
 </body>
