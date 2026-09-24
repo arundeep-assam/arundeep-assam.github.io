@@ -605,6 +605,292 @@ footer {
     letter-spacing: -.01em; color: var(--white);
   }
 }
+
+/* ─── FLOATING CALENDAR BUTTON ──────────────────── */
+.cal-fab {
+  position: fixed;
+  bottom: 2.2rem;
+  right: 2.2rem;
+  z-index: 500;
+  width: 58px;
+  height: 58px;
+  background: var(--black2);
+  border: 1px solid rgba(212,168,71,.35);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color .25s, background .25s, transform .2s;
+  box-shadow: 0 8px 32px rgba(0,0,0,.6);
+  gap: 2px;
+}
+.cal-fab:hover {
+  border-color: var(--accent);
+  background: #1a1a1a;
+  transform: translateY(-2px);
+}
+.cal-fab .fab-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+.cal-fab .fab-label {
+  font-family: var(--fb);
+  font-size: .38rem;
+  font-weight: 300;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+/* pulse ring */
+.cal-fab::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1px solid rgba(212,168,71,.18);
+  border-radius: 0;
+  animation: fabPulse 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes fabPulse {
+  0%,100% { opacity: .5; transform: scale(1); }
+  50%      { opacity: 0; transform: scale(1.2); }
+}
+
+/* ─── CALENDAR MODAL OVERLAY ─────────────────────── */
+.cal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4,4,6,.88);
+  backdrop-filter: blur(12px);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.cal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ─── CALENDAR MODAL ────────────────────────────── */
+.cal-modal {
+  background: var(--black2);
+  border: 1px solid rgba(212,168,71,.2);
+  width: 100%;
+  max-width: 560px;
+  position: relative;
+  transform: translateY(24px) scale(.97);
+  transition: transform .38s cubic-bezier(.25,.46,.45,.94);
+  box-shadow: 0 40px 100px rgba(0,0,0,.8);
+}
+.cal-overlay.open .cal-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Modal header */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 1.8rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(212,168,71,.04);
+}
+.cal-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+.cal-eng-date {
+  font-family: var(--fb);
+  font-size: .6rem;
+  font-weight: 300;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.cal-asm-month {
+  font-family: var(--fs);
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.1;
+}
+.cal-asm-year {
+  font-family: var(--fb);
+  font-size: .62rem;
+  font-weight: 300;
+  letter-spacing: .14em;
+  color: rgba(242,237,230,.4);
+}
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.cal-nav-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--white2);
+  font-size: .85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .2s, color .2s;
+}
+.cal-nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.cal-close {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--white3, #7A756E);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: .5rem;
+  transition: border-color .2s, color .2s;
+}
+.cal-close:hover {
+  border-color: rgba(242,237,230,.35);
+  color: var(--white);
+}
+
+/* Day-of-week header row */
+.cal-dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+.cal-dow span {
+  font-family: var(--fb);
+  font-size: .52rem;
+  font-weight: 400;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(242,237,230,.28);
+  text-align: center;
+  padding: .7rem .2rem;
+  border-right: 1px solid var(--line);
+}
+.cal-dow span:last-child { border-right: none; }
+
+/* Day grid */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cal-day {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: .55rem .4rem;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .2rem;
+  position: relative;
+  transition: background .18s;
+  cursor: default;
+}
+.cal-day:nth-child(7n) { border-right: none; }
+/* remove bottom border on last row */
+.cal-day.last-row { border-bottom: none; }
+.cal-day:hover:not(.empty) {
+  background: rgba(212,168,71,.05);
+}
+.cal-day.empty {
+  background: transparent;
+  cursor: default;
+}
+.cal-day .g-num {
+  font-family: var(--fb);
+  font-size: .68rem;
+  font-weight: 300;
+  color: rgba(242,237,230,.35);
+  line-height: 1;
+}
+.cal-day .a-num {
+  font-family: var(--fs);
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1;
+}
+/* today highlight */
+.cal-day.today {
+  background: rgba(212,168,71,.08);
+}
+.cal-day.today::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+.cal-day.today .a-num {
+  color: var(--accent);
+}
+/* Bihu / festival days */
+.cal-day.festival .a-num { color: #e87c5a; }
+.cal-day .fest-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #e87c5a;
+  flex-shrink: 0;
+}
+
+/* Festival legend */
+.cal-footer {
+  border-top: 1px solid var(--line);
+  padding: 1rem 1.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem 1.5rem;
+}
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--fb);
+  font-size: .58rem;
+  font-weight: 300;
+  letter-spacing: .1em;
+  color: rgba(242,237,230,.4);
+}
+.legend-dot-today {
+  width: 8px; height: 2px;
+  background: var(--accent);
+}
+.legend-dot-fest {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #e87c5a;
+}
+
+/* ─── RESPONSIVE CALENDAR ────────────────────────── */
+@media (max-width: 480px) {
+  .cal-modal { max-width: 100%; }
+  .cal-day { min-height: 46px; }
+  .cal-asm-month { font-size: 1.2rem; }
+  .cal-day .a-num { font-size: .85rem; }
+  .cal-fab { bottom: 1.2rem; right: 1.2rem; }
+}
 </style>
 </head>
 <body>
@@ -996,36 +1282,387 @@ footer {
   </div>
 </footer>
 
+<!-- ═══════════════════════════════════════════════
+     FLOATING CALENDAR BUTTON
+════════════════════════════════════════════════ -->
+<button class="cal-fab" id="calFab" aria-label="Open Assamese Calendar" title="অসমীয়া পঞ্জিকা">
+  <span class="fab-icon">📅</span>
+  <span class="fab-label">পঞ্জিকা</span>
+</button>
+
+<!-- ═══════════════════════════════════════════════
+     CALENDAR MODAL
+════════════════════════════════════════════════ -->
+<div class="cal-overlay" id="calOverlay" role="dialog" aria-modal="true" aria-label="Assamese Calendar">
+
+  <div class="cal-modal" id="calModal">
+
+    <!-- Header: month name, nav arrows, close -->
+    <div class="cal-header">
+      <div class="cal-header-left">
+        <span class="cal-eng-date" id="calEngLabel"></span>
+        <span class="cal-asm-month" id="calAsmMonth"></span>
+        <span class="cal-asm-year" id="calAsmYear"></span>
+      </div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" id="calPrev" aria-label="Previous month">‹</button>
+        <button class="cal-nav-btn" id="calToday" title="Go to today" style="font-size:.55rem;letter-spacing:.08em;padding:0 .5rem;width:auto;">আজি</button>
+        <button class="cal-nav-btn" id="calNext" aria-label="Next month">›</button>
+        <button class="cal-close" id="calClose" aria-label="Close calendar">✕</button>
+      </div>
+    </div>
+
+    <!-- Day-of-week header -->
+    <div class="cal-dow">
+      <span title="দেওবাৰ">দেও</span>
+      <span title="সোমবাৰ">সোম</span>
+      <span title="মঙ্গলবাৰ">মঙ্গল</span>
+      <span title="বুধবাৰ">বুধ</span>
+      <span title="বৃহস্পতিবাৰ">বৃহ</span>
+      <span title="শুক্ৰবাৰ">শুক্ৰ</span>
+      <span title="শনিবাৰ">শনি</span>
+    </div>
+
+    <!-- Day cells — rendered by JS -->
+    <div class="cal-grid" id="calGrid"></div>
+
+    <!-- Legend -->
+    <div class="cal-footer">
+      <div class="cal-legend-item">
+        <span class="legend-dot-today"></span>
+        আজি (Today)
+      </div>
+      <div class="cal-legend-item">
+        <span class="legend-dot-fest"></span>
+        উৎসৱ (Festival)
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
-/* Custom cursor */
+/* ── CURSOR ─────────────────────────────────────── */
 const cur = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
   cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
+  cur.style.top  = e.clientY + 'px';
 });
 document.querySelectorAll('a, button').forEach(el => {
   el.addEventListener('mouseenter', () => cur.classList.add('expand'));
   el.addEventListener('mouseleave', () => cur.classList.remove('expand'));
 });
 
-/* Scroll reveals */
+/* ── SCROLL REVEALS ──────────────────────────────── */
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-/* Mobile menu */
-function toggleMM() {
-  document.getElementById('mobileMenu').classList.toggle('open');
-}
-function closeMM() {
-  document.getElementById('mobileMenu').classList.remove('open');
-}
+/* ── MOBILE MENU ─────────────────────────────────── */
+function toggleMM() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMM()  { document.getElementById('mobileMenu').classList.remove('open'); }
 
-/* Nav transparency */
+/* ── NAV TRANSPARENCY ────────────────────────────── */
 window.addEventListener('scroll', () => {
   document.querySelector('nav').style.borderBottomColor =
     window.scrollY > 60 ? 'rgba(242,237,230,.07)' : 'rgba(242,237,230,.1)';
+});
+
+/* ══════════════════════════════════════════════════
+   ASSAMESE CALENDAR ENGINE
+   Assamese calendar = Bikram Sambat (BS)
+   BS year ≈ Gregorian year + 56 (before mid-April) or +57 (after)
+   New year (Bohag/Baisakh) starts ~April 14-15
+══════════════════════════════════════════════════ */
+
+/* Assamese month names (Xaka/Assamese lunisolar — starts mid-April) */
+const ASM_MONTHS = [
+  'বহাগ',    /* 01 — Bohag    (mid-Apr – mid-May)  */
+  'জেঠ',     /* 02 — Jeth     (mid-May – mid-Jun)  */
+  'আহাৰ',    /* 03 — Ahar     (mid-Jun – mid-Jul)  */
+  'শাওণ',    /* 04 — Xaon     (mid-Jul – mid-Aug)  */
+  'ভাদ',     /* 05 — Bhad     (mid-Aug – mid-Sep)  */
+  'আহিন',    /* 06 — Ahin     (mid-Sep – mid-Oct)  */
+  'কাতি',    /* 07 — Kati     (mid-Oct – mid-Nov)  */
+  'আঘোণ',   /* 08 — Aghon    (mid-Nov – mid-Dec)  */
+  'পুহ',     /* 09 — Puh      (mid-Dec – mid-Jan)  */
+  'মাঘ',     /* 10 — Magh     (mid-Jan – mid-Feb)  */
+  'ফাগুন',   /* 11 — Phagun   (mid-Feb – mid-Mar)  */
+  "চ'ত",    /* 12 — Chot     (mid-Mar – mid-Apr)  */
+];
+
+const ASM_MONTH_EN = [
+  'Bohag','Jeth','Ahar','Xaon','Bhad','Ahin',
+  'Kati','Aghon','Puh','Magh','Phagun','Chot'
+];
+
+/* Gregorian month names (short) for the header label */
+const GR_MONTHS = [
+  'Jan','Feb','Mar','Apr','May','Jun',
+  'Jul','Aug','Sep','Oct','Nov','Dec'
+];
+
+/**
+ * Convert a Gregorian date to Assamese (Bikram Sambat solar) date.
+ *
+ * The Assamese solar calendar runs parallel to the Bengali Panjika.
+ * Each Assamese month begins when the sun enters a new zodiac sign
+ * (Sankranti), which falls between the 13th–16th of the corresponding
+ * Gregorian month. We use the canonical mid-month transition dates:
+ *
+ *   Bohag  starts Apr 14/15   (Mesha Sankranti — Bihu)
+ *   Jeth   starts May 15/16
+ *   Ahar   starts Jun 15/16
+ *   Xaon   starts Jul 16/17
+ *   Bhad   starts Aug 16/17
+ *   Ahin   starts Sep 16/17
+ *   Kati   starts Oct 17/18
+ *   Aghon  starts Nov 16/17
+ *   Puh    starts Dec 15/16
+ *   Magh   starts Jan 14/15
+ *   Phagun starts Feb 13/14
+ *   Chot   starts Mar 14/15
+ *
+ * Returns { asmDay, asmMonth (0-based), asmYear }
+ */
+function gregorianToAssamese(date) {
+  const y = date.getFullYear();
+  const m = date.getMonth(); // 0-based
+  const d = date.getDate();
+
+  /* Sankranti start day for each Gregorian month (approximate) */
+  const SANKRANTI = [14,13,14,14,15,15,16,16,16,17,16,15];
+  /* The Assamese month index that STARTS in each Gregorian month */
+  /* Apr→Bohag(0), May→Jeth(1) … Mar→Chot(11) */
+  const GREG_TO_ASM_START = [8,9,10,11,0,1,2,3,4,5,6,7]; // Jan=index0 → Puh starts Jan 14
+
+  let asmMonth, asmYear, asmDay;
+
+  const transDay = SANKRANTI[m];
+
+  if (d >= transDay) {
+    /* After Sankranti: we are in the month that started this Gregorian month */
+    asmMonth = GREG_TO_ASM_START[m];
+    asmDay   = d - transDay + 1;
+  } else {
+    /* Before Sankranti: we are still in the previous Assamese month */
+    const prevM = (m - 1 + 12) % 12;
+    asmMonth = GREG_TO_ASM_START[prevM];
+    /* Days elapsed since previous Sankranti */
+    const prevTransDay = SANKRANTI[prevM];
+    /* Days in previous Gregorian month */
+    const daysInPrevGregMonth = new Date(y, m, 0).getDate();
+    asmDay = (daysInPrevGregMonth - prevTransDay + 1) + d;
+  }
+
+  /* Bikram Sambat year:
+     Before Bohag (asmMonth < 0 i.e. Chot etc.): BS = Gregorian + 56
+     From Bohag onward: BS = Gregorian + 57           (Bihu = new BS year) */
+  if (asmMonth === 0 /* Bohag */ && d >= SANKRANTI[m]) {
+    asmYear = y + 57; /* New BS year just started */
+  } else if (asmMonth < 9) {
+    /* Bohag(0)–Ahin(5)–Kati(6)–Aghon(7)–Puh(8) after Apr: BS = y+57 */
+    asmYear = y + 57;
+  } else {
+    /* Puh(8 in Jan), Magh(9), Phagun(10), Chot(11): these fall in
+       Jan-Apr of next calendar year, BS = that year + 56 */
+    asmYear = y + 56;
+  }
+
+  return { asmDay, asmMonth, asmYear };
+}
+
+/**
+ * Given an Assamese month (0-based) and year, return the
+ * Gregorian date range [startDate, endDate] for that month.
+ */
+function asmMonthToGregorianRange(asmMonth, asmYear) {
+  /* Approximate Gregorian month index where this Assamese month starts */
+  /* Bohag(0)→Apr(3), Jeth(1)→May(4), … Chot(11)→Mar(2) */
+  const ASM_TO_GREG = [3,4,5,6,7,8,9,10,11,0,1,2];
+  const gregM = ASM_TO_GREG[asmMonth];
+
+  /* The Gregorian year for this Assamese month's start */
+  let gregY;
+  if (asmMonth >= 9) {
+    /* Puh(8→Jan), Magh(9→Jan)… these are in next Gregorian year */
+    gregY = asmYear - 56;
+  } else {
+    gregY = asmYear - 57;
+  }
+
+  const SANKRANTI = [14,13,14,14,15,15,16,16,16,17,16,15];
+  const startDay  = SANKRANTI[gregM];
+  const startDate = new Date(gregY, gregM, startDay);
+
+  /* End date = day before next month's Sankranti */
+  const nextAsmMonth = (asmMonth + 1) % 12;
+  const nextGregM    = ASM_TO_GREG[nextAsmMonth];
+  let   nextGregY    = gregY;
+  if (nextGregM < gregM) nextGregY++; /* wrapped into next Gregorian year */
+  const endDate = new Date(nextGregY, nextGregM, SANKRANTI[nextGregM] - 1);
+
+  return { startDate, endDate };
+}
+
+/* ── FESTIVAL DATA ───────────────────────────────
+   Key: "gregMonth(0-based)-gregDay" → festival name
+   (We mark them on the Gregorian day they fall on)
+───────────────────────────────────────────────── */
+const FESTIVALS = {
+  /* Bihu — the three main festivals */
+  '3-14': 'ৰঙালী বিহু (Bohag Bihu)',   /* Apr 14 */
+  '3-15': 'ৰঙালী বিহু',
+  '9-18': 'কঁগালী বিহু',               /* Oct 18 */
+  '0-15': 'ভোগালী বিহু',               /* Jan 15 */
+  /* Other significant Assamese / Indian festivals (approximate) */
+  '0-26': 'গণতন্ত্ৰ দিৱস',             /* Jan 26 — Republic Day */
+  '7-15': 'স্বাধীনতা দিৱস',            /* Aug 15 — Independence Day */
+  '9-2':  'গান্ধী জয়ন্তী',            /* Oct 2  — Gandhi Jayanti */
+  '11-25':'বড়দিন',                     /* Dec 25 — Christmas */
+};
+
+/* Convert Assamese digit */
+const ASM_DIGITS = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+function toAsmNum(n) {
+  return String(n).split('').map(c => ASM_DIGITS[+c] ?? c).join('');
+}
+
+/* ── CALENDAR STATE ──────────────────────────────── */
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
+
+/* viewDate drives which Assamese month we're showing */
+let viewDate = new Date(TODAY);
+
+/* Convert viewDate to Assamese to get the "current" asm month/year */
+function getViewAsm() { return gregorianToAssamese(viewDate); }
+
+/* ── RENDER ──────────────────────────────────────── */
+function renderCalendar() {
+  const { asmMonth, asmYear } = getViewAsm();
+  const { startDate, endDate } = asmMonthToGregorianRange(asmMonth, asmYear);
+
+  /* Header labels */
+  const sd = startDate, ed = endDate;
+  document.getElementById('calEngLabel').textContent =
+    GR_MONTHS[sd.getMonth()] + ' ' + sd.getDate() + ' – ' +
+    GR_MONTHS[ed.getMonth()] + ' ' + ed.getDate() + ', ' + ed.getFullYear();
+  document.getElementById('calAsmMonth').textContent = ASM_MONTHS[asmMonth];
+  document.getElementById('calAsmYear').textContent =
+    'বিক্ৰম সম্বৎ ' + toAsmNum(asmYear) + '  ·  ' + ASM_MONTH_EN[asmMonth];
+
+  /* Build day cells */
+  const grid   = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  /* How many blank cells before the first day? */
+  const firstDOW = startDate.getDay(); /* 0=Sun */
+
+  /* Total days in this Assamese month */
+  const msPerDay     = 86400000;
+  const totalDays    = Math.round((endDate - startDate) / msPerDay) + 1;
+  const totalCells   = Math.ceil((firstDOW + totalDays) / 7) * 7;
+  const lastRowStart = totalCells - 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+
+    const cellIdx = i - firstDOW; /* day index within Assamese month (0-based) */
+    const isLastRow = i >= lastRowStart;
+    if (isLastRow) cell.classList.add('last-row');
+
+    if (cellIdx < 0 || cellIdx >= totalDays) {
+      cell.classList.add('empty');
+    } else {
+      const gregDate = new Date(startDate.getTime() + cellIdx * msPerDay);
+      const gregDay  = gregDate.getDate();
+      const gregM    = gregDate.getMonth();
+      const asmDay   = cellIdx + 1;
+
+      /* Gregorian day number (small, top) */
+      const gNum = document.createElement('span');
+      gNum.className = 'g-num';
+      gNum.textContent = gregDay;
+      cell.appendChild(gNum);
+
+      /* Assamese day number (large) */
+      const aNum = document.createElement('span');
+      aNum.className = 'a-num';
+      aNum.textContent = toAsmNum(asmDay);
+      cell.appendChild(aNum);
+
+      /* Today highlight */
+      if (gregDate.getTime() === TODAY.getTime()) {
+        cell.classList.add('today');
+      }
+
+      /* Festival highlight */
+      const festKey = `${gregM}-${gregDay}`;
+      if (FESTIVALS[festKey]) {
+        cell.classList.add('festival');
+        cell.title = FESTIVALS[festKey];
+        const dot = document.createElement('span');
+        dot.className = 'fest-dot';
+        cell.appendChild(dot);
+      }
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+/* ── NAVIGATION ──────────────────────────────────── */
+function shiftMonth(delta) {
+  /* Move viewDate forward/backward by ~30 days then snap to correct month */
+  const { asmMonth, asmYear } = getViewAsm();
+  let newAsmMonth = asmMonth + delta;
+  let newAsmYear  = asmYear;
+  if (newAsmMonth > 11) { newAsmMonth = 0;  newAsmYear++; }
+  if (newAsmMonth < 0)  { newAsmMonth = 11; newAsmYear--; }
+
+  /* Set viewDate to the start of that new Assamese month */
+  const { startDate } = asmMonthToGregorianRange(newAsmMonth, newAsmYear);
+  viewDate = new Date(startDate);
+  renderCalendar();
+}
+
+/* ── OPEN / CLOSE ────────────────────────────────── */
+function openCal() {
+  viewDate = new Date(TODAY);
+  renderCalendar();
+  document.getElementById('calOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCal() {
+  document.getElementById('calOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── EVENT BINDINGS ──────────────────────────────── */
+document.getElementById('calFab').addEventListener('click', openCal);
+document.getElementById('calClose').addEventListener('click', closeCal);
+document.getElementById('calPrev').addEventListener('click', () => shiftMonth(-1));
+document.getElementById('calNext').addEventListener('click', () => shiftMonth(+1));
+document.getElementById('calToday').addEventListener('click', () => {
+  viewDate = new Date(TODAY);
+  renderCalendar();
+});
+
+/* Click outside modal to close */
+document.getElementById('calOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('calOverlay')) closeCal();
+});
+
+/* Keyboard: Escape to close, arrow keys to navigate */
+document.addEventListener('keydown', e => {
+  const overlay = document.getElementById('calOverlay');
+  if (!overlay.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeCal();
+  if (e.key === 'ArrowLeft')   shiftMonth(-1);
+  if (e.key === 'ArrowRight')  shiftMonth(+1);
 });
 </script>
 </body>
